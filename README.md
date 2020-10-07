@@ -1,2 +1,14 @@
 # left-4-dead-2-competitive-scs
-Basado en: https://github.com/SirPlease/L4D2-Competitive-Rework (6739e7cb711bd6779ed957b9fb48913fe6763163)
+Basado en: https://github.com/SirPlease/L4D2-Competitive-Rework
+- Probado con 87ebc1e98c73485d08b9346942f0792e67e12d3b
+## Configuraciones usadas en https://www.ServersCStrike.com/
+## Plugins
+- SourceBans https://sbpp.dev/
+- server_namer https://forums.alliedmods.net/showthread.php?p=2030557 (Fue editado para cargarse desde server.cfg con la cvar "hostname")
+- l4d2_mix https://forums.alliedmods.net/showthread.php?t=153781
+- SpecListener2.0 https://forums.alliedmods.net/showthread.php?t=95474
+- savechat https://forums.alliedmods.net/showthread.php?t=117116
+## Plugins Opcionales
+- l4d_hats https://forums.alliedmods.net/showthread.php?p=1448127
+- l4d_tank_rush https://github.com/SirPlease/L4D2-Competitive-Rework/issues/150
+- slots_vote https://github.com/SirPlease/L4D2-Competitive-Rework
