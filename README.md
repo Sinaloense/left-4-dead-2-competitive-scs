@@ -1,5 +1,5 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.2c"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/440daf4aa25417f3dd847dd4d24980d570314d67
+# left-4-dead-2-competitive-scs "SCS v0.9.3a"
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/ded6ea680bbb5ab6304d79343b8c510d5e4c47ea
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans https://sbpp.dev/ (1.6.3 https://github.com/sbpp/sourcebans-pp/releases)
@@ -13,6 +13,7 @@ Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit
 - l4d_hats https://forums.alliedmods.net/showthread.php?p=1448127
 - slots_vote https://github.com/SirPlease/L4D2-Competitive-Rework
 - l4d_tank_rush https://github.com/SirPlease/L4D2-Competitive-Rework
+- l4d_stats https://forums.alliedmods.net/showthread.php?t=115965
 ## Plugins SMAC (SourceMod Anti-Cheat) https://github.com/Silenci0/SMAC/tree/9c51c5a200eb6eea9f571b8af249b5e37a716e9e
 - smac
 - smac_aimbot
