@@ -123,10 +123,12 @@ public void OnPluginStart()
 	convar_RestrictDeadChat = CreateConVar("sm_chatprocessor_restrictdeadchat", "0", "Restricts all chat for the dead entirely.\n(0 = off, 1 = on)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	convar_AddGOTV = CreateConVar("sm_chatprocessor_addgotv", "1", "Add GOTV client to recipients list. (Only effects games with GOTV or SourceTV)", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	
-	char self[128];
-	GetPluginFilename(GetMyHandle(), self, sizeof(self));
-	ReplaceString(self, sizeof(self), ".smx", "", false);	
-	AutoExecConfig(true, self);
+	// char self[128];
+	// GetPluginFilename(GetMyHandle(), self, sizeof(self));
+	// ReplaceString(self, sizeof(self), ".smx", "", false);	
+	// AutoExecConfig(true, self);
+
+	AutoExecConfig();
 
 	g_MessageFormats = new StringMap();
 }
