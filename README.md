@@ -1,5 +1,5 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.3d"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/e8fca1d2fcb09eb32eca5520286517758481db83
+# left-4-dead-2-competitive-scs "SCS v0.9.3e"
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/2c81ecb96a4b8bcf35a0aec0be91c02a7430b7bb
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans https://sbpp.dev/ (1.6.3 https://github.com/sbpp/sourcebans-pp/releases)
@@ -10,7 +10,7 @@ Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit
 - SpecListener2.0 https://forums.alliedmods.net/showthread.php?t=95474
 - chat-processor https://forums.alliedmods.net/showthread.php?p=2448733 (Editado para generar configuraciones en carpeta raiz de cfg)
 - hextags https://forums.alliedmods.net/showthread.php?p=2566623
-- l4d_christmas_tree https://forums.alliedmods.net/showthread.php?t=319552
+- l4d_christmas_tree https://forums.alliedmods.net/showthread.php?t=319552 (l4d_christmas_tree.smx eliminado)
 ## Plugins Opcionales
 - l4d2_mix https://forums.alliedmods.net/showthread.php?t=153781
 - l4d_hats https://forums.alliedmods.net/showthread.php?p=1448127
