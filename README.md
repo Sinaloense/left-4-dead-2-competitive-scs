@@ -10,6 +10,7 @@ Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit
 - SpecListener2.0 https://forums.alliedmods.net/showthread.php?t=95474
 - chat-processor https://forums.alliedmods.net/showthread.php?p=2448733 (Editado para generar configuraciones en carpeta raiz de cfg)
 - hextags https://forums.alliedmods.net/showthread.php?p=2566623
+- Advertisements https://forums.alliedmods.net/showthread.php?t=155705
 - l4d_christmas_tree https://forums.alliedmods.net/showthread.php?t=319552 (l4d_christmas_tree.smx eliminado)
 ## Plugins Opcionales
 - l4d2_mix https://forums.alliedmods.net/showthread.php?t=153781
