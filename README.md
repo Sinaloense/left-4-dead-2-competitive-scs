@@ -1,5 +1,5 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.4c"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/4c920df53fff3370668d7aefb4356b5fd754c18d
+# left-4-dead-2-competitive-scs "SCS v0.9.4d"
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/69c372f3e470e232e1490c13bae8e399958bf621
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans https://sbpp.dev/ (1.6.3 https://github.com/sbpp/sourcebans-pp/releases)
