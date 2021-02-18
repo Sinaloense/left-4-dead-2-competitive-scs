@@ -526,7 +526,7 @@ public Action:Ready_Cmd(client, args)
 {
 	if (inReadyUp && IsClientInGame(client) && IsPlayer(client))
 	{
-		if(!isPlayerReady[client])
+        if(!isPlayerReady[client])
 		{
 			EmitSoundToClient(client, "buttons/button14.wav", _, _, _, _, 1.0);
 		}
@@ -548,7 +548,7 @@ public Action:Unready_Cmd(client, args)
 			EmitSoundToClient(client, "buttons/button14.wav", _, _, _, _, 1.0);
 		}
 
-		SetEngineTime(client);
+        SetEngineTime(client);
 		isPlayerReady[client] = false;
 		CancelFullReady();
 	}
@@ -580,7 +580,7 @@ public Action:OnPlayerRunCmd(client, &buttons, &impulse, Float:vel[3], Float:ang
 {
 	if (inReadyUp)
 	{
-		if (buttons & IN_RELOAD && !(GetEntProp(client, Prop_Data, "m_nOldButtons") & IN_RELOAD))
+        if (buttons & IN_RELOAD && !(GetEntProp(client, Prop_Data, "m_nOldButtons") & IN_RELOAD))
 		{
 			Ready_Cmd(client, 0);
 		}
