@@ -1,5 +1,5 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.6b"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/587317e9a494d55075f4f640051db042e521023d
+# left-4-dead-2-competitive-scs "SCS v0.9.6c"
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/7620b8272a6ed443aa71deb3ec752f6262efd3af
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans https://sbpp.dev/ (1.6.3 https://github.com/sbpp/sourcebans-pp/releases)
@@ -15,7 +15,7 @@ Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit
 ## Plugins Opcionales
 - readyup https://github.com/SirPlease/L4D2-Competitive-Rework (Editado para dar ready al pulsar 'R' + reproducir sonido)
 - l4d2_mix https://forums.alliedmods.net/showthread.php?t=153781
-- l4d_hats https://forums.alliedmods.net/showthread.php?p=1448127
+- l4d_hats 1.28 https://forums.alliedmods.net/showthread.php?t=153781
 - slots_vote https://github.com/SirPlease/L4D2-Competitive-Rework
 - l4d_tank_rush https://github.com/SirPlease/L4D2-Competitive-Rework
 - l4d_stats https://forums.alliedmods.net/showthread.php?t=115965

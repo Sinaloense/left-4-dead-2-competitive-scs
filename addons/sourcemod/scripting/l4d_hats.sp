@@ -1,6 +1,6 @@
 /*
 *	Hats
-*	Copyright (C) 2020 Silvers
+*	Copyright (C) 2021 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION 		"1.24"
+#define PLUGIN_VERSION 		"1.28"
 
 /*======================================================================================
 	Plugin Info:
@@ -31,6 +31,19 @@
 
 ========================================================================================
 	Change Log:
+
+1.28 (20-Mar-2021)
+	- Added cvar "l4d_hats_wall" to prevent hats glowing through walls. Thanks to "Marttt" for the method and "Dragokas" for requesting.
+	- Fixed personal hats not showing when changing hat in external view.
+
+1.27 (01-Mar-2021)
+	- Fixed invalid client errors due to the last update. Thanks to "ur5efj" for reporting.
+
+1.26 (01-Mar-2021)
+	- Now blocks showing hats when spectating someone in first person view. Thanks to "Alex101192" for reporting.
+
+1.25 (23-Feb-2021)
+	- Fixed hats not hiding after being revived. Thanks to "Alex101192" for reporting.
 
 1.24 (01-Oct-2020)
 	- Changed "l4d_hats_precache" cvar default value to blank.
@@ -203,11 +216,11 @@
 #define	MAX_HATS			128
 
 
-ConVar g_hCvarAllow, g_hCvarChange, g_hCvarDetect, g_hCvarMenu, g_hCvarModes, g_hCvarModesOff, g_hCvarModesTog, g_hCvarOpaq, g_hCvarPrecache, g_hCvarRand, g_hCvarSave, g_hCvarThird, g_hCvarView;
+ConVar g_hCvarAllow, g_hCvarChange, g_hCvarDetect, g_hCvarMenu, g_hCvarModes, g_hCvarModesOff, g_hCvarModesTog, g_hCvarOpaq, g_hCvarPrecache, g_hCvarRand, g_hCvarSave, g_hCvarThird, g_hCvarView, g_hCvarWall;
 ConVar g_hCvarMPGameMode;
 Handle g_hCookie;
 Menu g_hMenu, g_hMenus[MAXPLAYERS+1];
-bool g_bCvarAllow, g_bMapStarted, g_bCvarView, g_bLeft4Dead2, g_bTranslation, g_bViewHooked, g_bValidMap;
+bool g_bCvarAllow, g_bMapStarted, g_bCvarView, g_bCvarWall, g_bLeft4Dead2, g_bTranslation, g_bViewHooked, g_bValidMap;
 int g_iCount, g_iCvarFlags, g_iCvarOpaq, g_iCvarRand, g_iCvarSave, g_iCvarThird;
 float g_fCvarChange, g_fCvarDetect;
 
@@ -215,6 +228,7 @@ float g_fSize[MAX_HATS], g_vAng[MAX_HATS][3], g_vPos[MAX_HATS][3];
 char g_sModels[MAX_HATS][64], g_sNames[MAX_HATS][64];
 char g_sSteamID[MAXPLAYERS+1][32];		// Stores client user id to determine if the blocked player is the same
 int g_iHatIndex[MAXPLAYERS+1];			// Player hat entity reference
+int g_iHatWalls[MAXPLAYERS+1];			// Hidden hat entity reference
 int g_iSelected[MAXPLAYERS+1];			// The selected hat index (0 to MAX_HATS)
 int g_iTarget[MAXPLAYERS+1];			// For admins to change clients hats
 int g_iType[MAXPLAYERS+1];				// Stores selected hat to give players
@@ -339,6 +353,7 @@ public void OnPluginStart()
 	g_hCvarSave = CreateConVar(			"l4d_hats_save",		"1", 			"0=Off, 1=Save the players selected hats and attach when they spawn or rejoin the server. Overrides the random setting.", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	g_hCvarThird = CreateConVar(		"l4d_hats_third",		"1", 			"0=Off, 1=When a player is in third person view, display their hat. Hide when in first person view.", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	g_hCvarView = CreateConVar(			"l4d_hats_view",		"0",			"0=Off, 1=Make a players hat visible by default when they join.", CVAR_FLAGS, true, 0.0, true, 1.0 );
+	g_hCvarWall = CreateConVar(			"l4d_hats_wall",		"1",			"0=Show hats glowing through walls, 1=Hide hats glowing when behind walls (creates 1 extra entity per hat).", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	CreateConVar(						"l4d_hats_version",		PLUGIN_VERSION,	"Hats plugin version.",	FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	AutoExecConfig(true,				"l4d_hats");
 
@@ -354,6 +369,7 @@ public void OnPluginStart()
 	g_hCvarRand.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarSave.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarView.AddChangeHook(ConVarChanged_Cvars);
+	g_hCvarWall.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarOpaq.AddChangeHook(CvarChangeOpac);
 	g_hCvarThird.AddChangeHook(CvarChangeThird);
 
@@ -421,6 +437,7 @@ void GetCvars()
 	g_iCvarSave = g_hCvarSave.IntValue;
 	g_iCvarThird = g_hCvarThird.IntValue;
 	g_bCvarView = g_hCvarView.BoolValue;
+	g_bCvarWall = g_hCvarWall.BoolValue;
 }
 
 void IsAllowed()
@@ -436,6 +453,7 @@ void IsAllowed()
 		if( g_iCvarThird )
 			HookViewEvents();
 		HookEvents();
+		SpectatorHatHooks();
 
 		for( int i = 1; i <= MaxClients; i++ )
 		{
@@ -484,6 +502,17 @@ void IsAllowed()
 		for( int i = 1; i <= MaxClients; i++ )
 		{
 			RemoveHat(i);
+
+			if( IsValidEntRef(g_iHatIndex[i]) )
+			{
+				for( int x = 1; x <= MaxClients; x++ )
+				{
+					if( IsClientInGame(x) )
+					{
+						SDKUnhook(g_iHatIndex[i], SDKHook_SetTransmit, Hook_SetSpecTransmit);
+					}
+				}
+			}
 		}
 	}
 }
@@ -740,18 +769,19 @@ void HookViewEvents()
 	{
 		g_bViewHooked = true;
 
+		HookEvent("revive_success",			Event_First2);
 		HookEvent("player_ledge_grab",		Event_Third1);
 		HookEvent("lunge_pounce",			Event_Third2);
-		HookEvent("pounce_end",				Event_First);
+		HookEvent("pounce_end",				Event_First1);
 		HookEvent("tongue_grab",			Event_Third2);
-		HookEvent("tongue_release",			Event_First);
+		HookEvent("tongue_release",			Event_First1);
 
 		if( g_bLeft4Dead2 )
 		{
 			HookEvent("charger_pummel_start",		Event_Third2);
 			HookEvent("charger_carry_start",		Event_Third2);
-			HookEvent("charger_carry_end",			Event_First);
-			HookEvent("charger_pummel_end",			Event_First);
+			HookEvent("charger_carry_end",			Event_First1);
+			HookEvent("charger_pummel_end",			Event_First1);
 		}
 	}
 }
@@ -762,18 +792,19 @@ void UnhookViewEvents()
 	{
 		g_bViewHooked = true;
 
+		UnhookEvent("revive_success",		Event_First2);
 		UnhookEvent("player_ledge_grab",	Event_Third1);
 		UnhookEvent("lunge_pounce",			Event_Third2);
-		UnhookEvent("pounce_end",			Event_First);
+		UnhookEvent("pounce_end",			Event_First1);
 		UnhookEvent("tongue_grab",			Event_Third2);
-		UnhookEvent("tongue_release",		Event_First);
+		UnhookEvent("tongue_release",		Event_First1);
 
 		if( g_bLeft4Dead2 )
 		{
 			UnhookEvent("charger_pummel_start",		Event_Third2);
 			UnhookEvent("charger_carry_start",		Event_Third2);
-			UnhookEvent("charger_carry_end",		Event_First);
-			UnhookEvent("charger_pummel_end",		Event_First);
+			UnhookEvent("charger_carry_end",		Event_First1);
+			UnhookEvent("charger_pummel_end",		Event_First1);
 		}
 	}
 }
@@ -809,6 +840,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 		return;
 
 	RemoveHat(client);
+	SpectatorHatHooks();
 }
 
 public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
@@ -824,6 +856,8 @@ public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast
 			CreateTimer(0.5, TimerDelayCreate, clientID);
 		}
 	}
+
+	SpectatorHatHooks();
 }
 
 public void Event_PlayerTeam(Event event, const char[] name, bool dontBroadcast)
@@ -832,6 +866,7 @@ public void Event_PlayerTeam(Event event, const char[] name, bool dontBroadcast)
 	int client = GetClientOfUserId(clientID);
 
 	RemoveHat(client);
+	SpectatorHatHooks();
 
 	if( g_iCvarRand )
 		CreateTimer(0.1, TimerDelayCreate, clientID);
@@ -852,9 +887,14 @@ public Action TimerDelayCreate(Handle timer, any client)
 	}
 }
 
-public void Event_First(Event event, const char[] name, bool dontBroadcast)
+public void Event_First1(Event event, const char[] name, bool dontBroadcast)
 {
 	EventView(GetClientOfUserId(event.GetInt("victim")), false);
+}
+
+public void Event_First2(Event event, const char[] name, bool dontBroadcast)
+{
+	EventView(GetClientOfUserId(event.GetInt("subject")), false);
 }
 
 public void Event_Third1(Event event, const char[] name, bool dontBroadcast)
@@ -948,6 +988,68 @@ void SetHatView(int client, bool bIsThirdPerson)
 				SDKHook(entity, SDKHook_SetTransmit, Hook_SetTransmit);
 		}
 	}
+}
+
+
+
+// ====================================================================================================
+//					BLOCK HATS - WHEN SPECTATING IN 1ST PERSON VIEW
+// ====================================================================================================
+// Loop through hats, find valid ones, loop through for each client and add transmit hook for spectators
+// Could be better instead of unhooking and hooking everyone each time, but quick and dirty addition...
+void SpectatorHatHooks()
+{
+	for( int index = 1; index <= MaxClients; index++ )
+	{
+		if( IsValidEntRef(g_iHatIndex[index]) )
+		{
+			for( int i = 1; i <= MaxClients; i++ )
+			{
+				if( IsClientInGame(i) )
+				{
+					SDKUnhook(g_iHatIndex[index], SDKHook_SetTransmit, Hook_SetSpecTransmit);
+
+					if( !IsPlayerAlive(i) )
+					{
+						// Must hook 1 frame later because SDKUnhook first and then SDKHook doesn't work, it won't be hooked for some reason.
+						DataPack dPack = new DataPack();
+						dPack.WriteCell(GetClientUserId(i));
+						dPack.WriteCell(index);
+						RequestFrame(OnFrameHooks, dPack);
+					}
+				}
+			}
+		}
+	}
+}
+
+public void OnFrameHooks(DataPack dPack)
+{
+	dPack.Reset();
+
+	int client = dPack.ReadCell();
+	client = GetClientOfUserId(client);
+
+	if( client && !IsPlayerAlive(client) )
+	{
+		int index = dPack.ReadCell();
+		SDKHook(EntRefToEntIndex(g_iHatIndex[index]), SDKHook_SetTransmit, Hook_SetSpecTransmit);
+	}
+
+	delete dPack;
+}
+
+public Action Hook_SetSpecTransmit(int entity, int client)
+{
+	if( !IsPlayerAlive(client) && GetEntProp(client, Prop_Send, "m_iObserverMode") == 4 )
+	{
+		int target = GetEntPropEnt(client, Prop_Send, "m_hObserverTarget");
+		if( target > 0 && target <= MaxClients  && g_iHatIndex[target] == EntIndexToEntRef(entity) )
+		{
+			return Plugin_Handled;
+		}
+	}
+	return Plugin_Continue;
 }
 
 
@@ -1848,8 +1950,16 @@ public int SizeMenuHandler(Menu menu, MenuAction action, int client, int index)
 // ===================================================================================================
 void RemoveHat(int client)
 {
+	// Hat entity
 	int entity = g_iHatIndex[client];
 	g_iHatIndex[client] = 0;
+
+	if( IsValidEntRef(entity) )
+		AcceptEntityInput(entity, "kill");
+
+	// Hidden entity
+	entity = g_iHatWalls[client];
+	g_iHatWalls[client] = 0;
 
 	if( IsValidEntRef(entity) )
 		AcceptEntityInput(entity, "kill");
@@ -1910,6 +2020,16 @@ bool CreateHat(int client, int index = -1)
 		SetClientCookie(client, g_hCookie, sNum);
 	}
 
+	// Fix showing glow through walls, break glow inheritance by attaching hats to info_target.
+	// Method by "Marttt": https://forums.alliedmods.net/showpost.php?p=2737781&postcount=21
+	int target;
+
+	if( g_bCvarWall )
+	{
+		target = CreateEntityByName("info_target");
+		DispatchSpawn(target);
+	}
+
 	int entity = CreateEntityByName("prop_dynamic_override");
 	if( entity != -1 )
 	{
@@ -1920,10 +2040,26 @@ bool CreateHat(int client, int index = -1)
 			SetEntPropFloat(entity, Prop_Send, "m_flModelScale", g_fSize[index]);
 		}
 
-		SetVariantString("!activator");
-		AcceptEntityInput(entity, "SetParent", client);
-		SetVariantString("eyes");
-		AcceptEntityInput(entity, "SetParentAttachment");
+		if( g_bCvarWall )
+		{
+			SetVariantString("!activator");
+			AcceptEntityInput(entity, "SetParent", target);
+			TeleportEntity(target, g_vPos[index], NULL_VECTOR, NULL_VECTOR);
+
+			SetVariantString("!activator");
+			AcceptEntityInput(target, "SetParent", client);
+			SetVariantString("eyes");
+			AcceptEntityInput(target, "SetParentAttachment");
+			TeleportEntity(target, g_vPos[index], NULL_VECTOR, NULL_VECTOR);
+
+			g_iHatWalls[client] = EntIndexToEntRef(target);
+		} else {
+			SetVariantString("!activator");
+			AcceptEntityInput(entity, "SetParent", client);
+			SetVariantString("eyes");
+			AcceptEntityInput(entity, "SetParentAttachment");
+			TeleportEntity(entity, g_vPos[index], NULL_VECTOR, NULL_VECTOR);
+		}
 
 		// Lux
 		AcceptEntityInput(entity, "DisableCollision");
@@ -1933,7 +2069,7 @@ bool CreateHat(int client, int index = -1)
 		SetEntPropVector(entity, Prop_Send, "m_vecMaxs", view_as<float>({0.0, 0.0, 0.0}));
 		// Lux
 
-		TeleportEntity(entity, g_vPos[index], g_vAng[index], NULL_VECTOR);
+		TeleportEntity(g_bCvarWall ? target : entity, g_vPos[index], g_vAng[index], NULL_VECTOR);
 		SetEntProp(entity, Prop_Data, "m_iEFlags", 0);
 
 		if( g_iCvarOpaq )
@@ -1960,6 +2096,7 @@ bool CreateHat(int client, int index = -1)
 			CPrintToChat(client, "%s%T", CHAT_TAG, "Hat_Wearing", client, sMsg);
 		}
 
+		SpectatorHatHooks();
 		return true;
 	}
 
@@ -1970,6 +2107,8 @@ void ExternalView(int client)
 {
 	if( g_fCvarChange && g_bLeft4Dead2 )
 	{
+		g_bExternalState[client] = false;
+
 		EventView(client, true);
 
 		// Survivor Thirdperson plugin sets 99999.3.
