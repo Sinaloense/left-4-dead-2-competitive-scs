@@ -1,8 +1,8 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.6e"
+# left-4-dead-2-competitive-scs "SCS v0.9.6f"
 Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/ec1dffd3b3410481a3542bc875138bb050ab17c1
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
-- SourceBans https://sbpp.dev/ (1.6.3 https://github.com/sbpp/sourcebans-pp/releases)
+- SourceBans 1.x https://github.com/sbpp/sourcebans-pp/commit/5331ab9d759308adef97d6bd026ba3d650aa6411
 - l4d2_server_restarter https://github.com/LuckyServ/sourcemod-plugins/blob/master/source/l4d2_server_restarter.sp
 - server_namer https://forums.alliedmods.net/showthread.php?p=2030557 (Editado para cargarse desde server.cfg con la cvar "hostname")
 - familyshare_manager https://forums.alliedmods.net/showthread.php?t=293927 (Editado para que funcione sin updater y appid LFD2 550)
