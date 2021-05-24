@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION 		"1.28"
+#define PLUGIN_VERSION 		"1.31"
 
 /*======================================================================================
 	Plugin Info:
@@ -31,6 +31,17 @@
 
 ========================================================================================
 	Change Log:
+
+1.31 (03-May-2021)
+	- Added Simplified Chinese (zho) and Traditional Chinese (chi) translations. Thanks to "pan0s" for providing.
+	- Fixed not giving random hats to clients who have no saved hats. Thanks to "pan0s" for reporting.
+
+1.30 (28-Apr-2021)
+	- Fixed client not in-game errors. Thanks to "HarryPotter" for reporting.
+
+1.29 (10-Apr-2021)
+	- Added cvar "l4d_hats_bots" to allow or disallow bots from spawning with hats.
+	- Added cvar "l4d_hats_make" to allow players with specific flags only to auto spawn with hats.
 
 1.28 (20-Mar-2021)
 	- Added cvar "l4d_hats_wall" to prevent hats glowing through walls. Thanks to "Marttt" for the method and "Dragokas" for requesting.
@@ -216,12 +227,12 @@
 #define	MAX_HATS			128
 
 
-ConVar g_hCvarAllow, g_hCvarChange, g_hCvarDetect, g_hCvarMenu, g_hCvarModes, g_hCvarModesOff, g_hCvarModesTog, g_hCvarOpaq, g_hCvarPrecache, g_hCvarRand, g_hCvarSave, g_hCvarThird, g_hCvarView, g_hCvarWall;
+ConVar g_hCvarAllow, g_hCvarBots, g_hCvarChange, g_hCvarDetect, g_hCvarMake, g_hCvarMenu, g_hCvarModes, g_hCvarModesOff, g_hCvarModesTog, g_hCvarOpaq, g_hCvarPrecache, g_hCvarRand, g_hCvarSave, g_hCvarThird, g_hCvarView, g_hCvarWall;
 ConVar g_hCvarMPGameMode;
 Handle g_hCookie;
 Menu g_hMenu, g_hMenus[MAXPLAYERS+1];
-bool g_bCvarAllow, g_bMapStarted, g_bCvarView, g_bCvarWall, g_bLeft4Dead2, g_bTranslation, g_bViewHooked, g_bValidMap;
-int g_iCount, g_iCvarFlags, g_iCvarOpaq, g_iCvarRand, g_iCvarSave, g_iCvarThird;
+bool g_bCvarAllow, g_bMapStarted, g_bCvarBots, g_bCvarView, g_bCvarWall, g_bLeft4Dead2, g_bTranslation, g_bViewHooked, g_bValidMap;
+int g_iCount, g_iCvarMake, g_iCvarFlags, g_iCvarOpaq, g_iCvarRand, g_iCvarSave, g_iCvarThird;
 float g_fCvarChange, g_fCvarDetect;
 
 float g_fSize[MAX_HATS], g_vAng[MAX_HATS][3], g_vPos[MAX_HATS][3];
@@ -341,12 +352,14 @@ public void OnPluginStart()
 
 	// Cvars
 	g_hCvarAllow = CreateConVar(		"l4d_hats_allow",		"1",			"0=Plugin off, 1=Plugin on.", CVAR_FLAGS );
+	g_hCvarBots = CreateConVar(			"l4d_hats_bots",		"1",			"0=Disallow bots from spawning with Hats. 1=Allow bots to spawn with hats.", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	g_hCvarChange = CreateConVar(		"l4d_hats_change",		"1.3",			"0=Off. Other value puts the player into thirdperson for this many seconds when selecting a hat.", CVAR_FLAGS );
 	g_hCvarDetect = CreateConVar(		"l4d_hats_detect",		"0.3",			"0.0=Off. How often to detect thirdperson view. Also uses ThirdPersonShoulder_Detect plugin if available.", CVAR_FLAGS );
+	g_hCvarMake = CreateConVar(			"l4d_hats_make",		"",				"Specify admin flags or blank to allow all players to spawn with a hat, requires the l4d_hats_random cvar to spawn.", CVAR_FLAGS );
+	g_hCvarMenu = CreateConVar(			"l4d_hats_menu",		"",				"Specify admin flags or blank to allow all players access to the hats menu.", CVAR_FLAGS );
 	g_hCvarModes = CreateConVar(		"l4d_hats_modes",		"",				"Turn on the plugin in these game modes, separate by commas (no spaces). (Empty = all).", CVAR_FLAGS );
 	g_hCvarModesOff = CreateConVar(		"l4d_hats_modes_off",	"",				"Turn off the plugin in these game modes, separate by commas (no spaces). (Empty = none).", CVAR_FLAGS );
 	g_hCvarModesTog = CreateConVar(		"l4d_hats_modes_tog",	"",				"Turn on the plugin in these game modes. 0=All, 1=Coop, 2=Survival, 4=Versus, 8=Scavenge. Add numbers together.", CVAR_FLAGS );
-	g_hCvarMenu = CreateConVar(			"l4d_hats_menu",		"",				"Specify admin flags or blank to allow all players access to the hats menu.", CVAR_FLAGS );
 	g_hCvarOpaq = CreateConVar(			"l4d_hats_opaque",		"255", 			"How transparent or solid should the hats appear. 0=Translucent, 255=Opaque.", CVAR_FLAGS, true, 0.0, true, 255.0 );
 	g_hCvarPrecache = CreateConVar(		"l4d_hats_precache",	"",				"Prevent pre-caching models on these maps, separate by commas (no spaces). Enabling plugin on these maps will crash the server.", CVAR_FLAGS );
 	g_hCvarRand = CreateConVar(			"l4d_hats_random",		"1", 			"Attach a random hat when survivors spawn. 0=Never. 1=On round start. 2=Only first spawn (keeps the same hat next round).", CVAR_FLAGS, true, 0.0, true, 3.0 );
@@ -363,8 +376,10 @@ public void OnPluginStart()
 	g_hCvarModes.AddChangeHook(ConVarChanged_Allow);
 	g_hCvarModesOff.AddChangeHook(ConVarChanged_Allow);
 	g_hCvarModesTog.AddChangeHook(ConVarChanged_Allow);
+	g_hCvarBots.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarChange.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarDetect.AddChangeHook(ConVarChanged_Cvars);
+	g_hCvarMake.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarMenu.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarRand.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarSave.AddChangeHook(ConVarChanged_Cvars);
@@ -428,8 +443,11 @@ public void ConVarChanged_Cvars(Handle convar, const char[] oldValue, const char
 void GetCvars()
 {
 	char sTemp[32];
+	g_hCvarMake.GetString(sTemp, sizeof(sTemp));
+	g_iCvarMake = ReadFlagString(sTemp);
 	g_hCvarMenu.GetString(sTemp, sizeof(sTemp));
 	g_iCvarFlags = ReadFlagString(sTemp);
+	g_bCvarBots = g_hCvarBots.BoolValue;
 	g_fCvarChange = g_hCvarChange.FloatValue;
 	g_fCvarDetect = g_hCvarDetect.FloatValue;
 	g_iCvarOpaq = g_hCvarOpaq.IntValue;
@@ -876,8 +894,24 @@ public Action TimerDelayCreate(Handle timer, any client)
 {
 	client = GetClientOfUserId(client);
 
-	if( IsValidClient(client) )
+	if( IsValidClient(client) && !g_bBlocked[client] )
 	{
+		bool fake = IsFakeClient(client);
+		if( !g_bCvarBots && fake )
+		{
+			return;
+		}
+
+		if( !fake && g_iCvarMake != 0 )
+		{
+			int flags = GetUserFlagBits(client);
+
+			if( !(flags & ADMFLAG_ROOT) && !(flags & g_iCvarMake) )
+			{
+				return;
+			}
+		}
+
 		if( g_iCvarRand == 2 )
 			CreateHat(client, -2);
 		else if( g_iCvarSave && !IsFakeClient(client) )
@@ -1030,7 +1064,7 @@ public void OnFrameHooks(DataPack dPack)
 	int client = dPack.ReadCell();
 	client = GetClientOfUserId(client);
 
-	if( client && !IsPlayerAlive(client) )
+	if( client && IsClientInGame(client) && !IsPlayerAlive(client) )
 	{
 		int index = dPack.ReadCell();
 		SDKHook(EntRefToEntIndex(g_iHatIndex[index]), SDKHook_SetTransmit, Hook_SetSpecTransmit);
@@ -1067,11 +1101,11 @@ public Action CmdHat(int client, int args)
 		return Plugin_Handled;
 	}
 
-	int flags = GetUserFlagBits(client);
-
-	if( g_iCvarFlags != 0 && !(flags & ADMFLAG_ROOT) )
+	if( g_iCvarFlags != 0 )
 	{
-		if( g_bBlocked[client] || !(flags & g_iCvarFlags) )
+		int flags = GetUserFlagBits(client);
+
+		if( !(flags & ADMFLAG_ROOT) && !(flags & g_iCvarFlags) )
 		{
 			CPrintToChat(client, "%s%T", CHAT_TAG, "No Access", client);
 			return Plugin_Handled;
@@ -2000,12 +2034,11 @@ bool CreateHat(int client, int index = -1)
 
 		if( index == 0 )
 		{
-			if( IsFakeClient(client) == false )
+			if( IsFakeClient(client) == true )
 				return false;
 			else
 				index = GetRandomInt(1, g_iCount);
 		}
-
 		index--;
 	}
 	else // Specified hat
