@@ -27,7 +27,9 @@
 
 #define DEBUG 0
 
-#define SHOWDATETIME 0
+// #define SHOWDATETIME 0 // Disabled
+// #define SHOWDATETIME 1 // Enabled
+#define SHOWDATETIME 2 // Enabled, but date and time disabled
 
 public Plugin myinfo =
 {
@@ -811,7 +813,7 @@ public int VoteActionHandler(Handle vote, BuiltinVoteAction action, int param1, 
 	}
 }
 
-public int ForceStartVoteResultHandler(Handle vote, int num_votes, int num_clients, const client_info[][2], int num_items, const item_info[][2])
+public void ForceStartVoteResultHandler(Handle vote, int num_votes, int num_clients, const int[][] client_info, int num_items, const int[][] item_info)
 {
 	if (!inReadyUp || inLiveCountdown)
 	{
@@ -847,7 +849,7 @@ public Action Timer_ForceStart(Handle timer)
 	InitiateLiveCountdown();
 }
 
-public int KickSpecsVoteResultHandler(Handle vote, int num_votes, int num_clients, const client_info[][2], int num_items, const item_info[][2])
+public void KickSpecsVoteResultHandler(Handle vote, int num_votes, int num_clients, const int[][] client_info, int num_items, const int[][] item_info)
 {
 	for (int i = 0; i < num_items; i++)
 	{
@@ -930,7 +932,7 @@ public Action MenuCmd_Timer(Handle timer)
 
 void UpdatePanel()
 {
-	if (IsBuiltinVoteInProgress())
+	if (BuiltinVote_IsVoteInProgress())
 	{
 		for (int i = 1; i <= MaxClients; i++)
 		{
@@ -974,8 +976,14 @@ void UpdatePanel()
 	menuPanel.DrawText(ServerBuffer);
 	
 	#if SHOWDATETIME
-		FormatTime(ServerBuffer, sizeof(ServerBuffer), "▸ %m/%d/%Y - %I:%M%p");
-		Format(ServerBuffer, sizeof(ServerBuffer), "%s (%s%d:%s%d)", ServerBuffer, (iPassTime / 60 < 10) ? "0" : "", iPassTime / 60, (iPassTime % 60 < 10) ? "0" : "", iPassTime % 60);
+		if (SHOWDATETIME == 1.0) {
+			FormatTime(ServerBuffer, sizeof(ServerBuffer), "▸ %m/%d/%Y - %I:%M%p ");
+		}
+		else {
+			Format(ServerBuffer, sizeof(ServerBuffer), "▸ ");
+		}
+
+		Format(ServerBuffer, sizeof(ServerBuffer), "%s(%s%d:%s%d)", ServerBuffer, (iPassTime / 60 < 10) ? "0" : "", iPassTime / 60, (iPassTime % 60 < 10) ? "0" : "", iPassTime % 60);
 		menuPanel.DrawText(ServerBuffer);
 	#endif
 	
