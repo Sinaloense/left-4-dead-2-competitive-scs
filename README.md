@@ -1,4 +1,4 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.8c"
+# left-4-dead-2-competitive-scs "SCS v0.9.8d"
 Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/bcc9dd3c7d01ae792be44d524eeb31d1696477d9
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
