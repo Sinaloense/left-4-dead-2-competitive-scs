@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION 		"1.31"
+#define PLUGIN_VERSION 		"1.36"
 
 /*======================================================================================
 	Plugin Info:
@@ -31,6 +31,21 @@
 
 ========================================================================================
 	Change Log:
+
+1.36 (20-Jul-2021)
+	- Removed cvar "l4d_hats_view" - recommended to use "ThirdPersonShoulder_Detect" plugin to turn on/off the hat view when in 3rd/1st person view.
+
+1.35 (10-Jul-2021)
+	- Fixed giving random hats to players when the "l4d_hats_random" cvar was set to "0". Thanks to "XYZC" for reporting.
+
+1.34 (05-Jul-2021)
+	- Fixed giving random hats on round_start when "l4d_hats_save" cvar was set to "1".
+
+1.33 (04-Jul-2021)
+	- Fixed "sm_hatrand" and "sm_hatrandom" from not giving random hats. Not sure when this broke.
+
+1.32 (01-Jul-2021)
+	- Added a warning message to suggest installing the "Attachments API" and "Use Priority Patch" plugins if missing.
 
 1.31 (03-May-2021)
 	- Added Simplified Chinese (zho) and Traditional Chinese (chi) translations. Thanks to "pan0s" for providing.
@@ -227,11 +242,11 @@
 #define	MAX_HATS			128
 
 
-ConVar g_hCvarAllow, g_hCvarBots, g_hCvarChange, g_hCvarDetect, g_hCvarMake, g_hCvarMenu, g_hCvarModes, g_hCvarModesOff, g_hCvarModesTog, g_hCvarOpaq, g_hCvarPrecache, g_hCvarRand, g_hCvarSave, g_hCvarThird, g_hCvarView, g_hCvarWall;
+ConVar g_hCvarAllow, g_hCvarBots, g_hCvarChange, g_hCvarDetect, g_hCvarMake, g_hCvarMenu, g_hCvarModes, g_hCvarModesOff, g_hCvarModesTog, g_hCvarOpaq, g_hCvarPrecache, g_hCvarRand, g_hCvarSave, g_hCvarThird, g_hCvarWall;
 ConVar g_hCvarMPGameMode;
 Handle g_hCookie;
 Menu g_hMenu, g_hMenus[MAXPLAYERS+1];
-bool g_bCvarAllow, g_bMapStarted, g_bCvarBots, g_bCvarView, g_bCvarWall, g_bLeft4Dead2, g_bTranslation, g_bViewHooked, g_bValidMap;
+bool g_bCvarAllow, g_bMapStarted, g_bCvarBots, g_bCvarWall, g_bLeft4Dead2, g_bTranslation, g_bViewHooked, g_bValidMap;
 int g_iCount, g_iCvarMake, g_iCvarFlags, g_iCvarOpaq, g_iCvarRand, g_iCvarSave, g_iCvarThird;
 float g_fCvarChange, g_fCvarDetect;
 
@@ -280,6 +295,21 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	return APLRes_Success;
 }
 
+public void OnAllPluginsLoaded()
+{
+	// Attachments API
+	if( FindConVar("attachments_api_version") == null && (FindConVar("l4d2_swap_characters_version") != null || FindConVar("l4d_csm_version") != null) )
+	{
+		LogMessage("\n==========\nWarning: You should install \"[ANY] Attachments API\" to fix model attachments when changing character models: https://forums.alliedmods.net/showthread.php?t=325651\n==========\n");
+	}
+
+	// Use Priority Patch
+	if( FindConVar("l4d_use_priority_version") == null )
+	{
+		LogMessage("\n==========\nWarning: You should install \"[L4D & L4D2] Use Priority Patch\" to fix attached models blocking +USE action: https://forums.alliedmods.net/showthread.php?t=327511\n==========\n");
+	}
+}
+
 public void OnPluginStart()
 {
 	// Load config
@@ -326,12 +356,9 @@ public void OnPluginStart()
 	// Transactions
 	char sPath[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, sPath, PLATFORM_MAX_PATH, "translations/hatnames.phrases.txt");
-	if( FileExists(sPath) )
-		g_bTranslation = true;
-	else
-		g_bTranslation = false;
+	g_bTranslation = FileExists(sPath);
 
-	if( g_bTranslation == true )
+	if( g_bTranslation )
 		LoadTranslations("hatnames.phrases");
 	LoadTranslations("hats.phrases");
 	LoadTranslations("core.phrases");
@@ -365,7 +392,6 @@ public void OnPluginStart()
 	g_hCvarRand = CreateConVar(			"l4d_hats_random",		"1", 			"Attach a random hat when survivors spawn. 0=Never. 1=On round start. 2=Only first spawn (keeps the same hat next round).", CVAR_FLAGS, true, 0.0, true, 3.0 );
 	g_hCvarSave = CreateConVar(			"l4d_hats_save",		"1", 			"0=Off, 1=Save the players selected hats and attach when they spawn or rejoin the server. Overrides the random setting.", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	g_hCvarThird = CreateConVar(		"l4d_hats_third",		"1", 			"0=Off, 1=When a player is in third person view, display their hat. Hide when in first person view.", CVAR_FLAGS, true, 0.0, true, 1.0 );
-	g_hCvarView = CreateConVar(			"l4d_hats_view",		"0",			"0=Off, 1=Make a players hat visible by default when they join.", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	g_hCvarWall = CreateConVar(			"l4d_hats_wall",		"1",			"0=Show hats glowing through walls, 1=Hide hats glowing when behind walls (creates 1 extra entity per hat).", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	CreateConVar(						"l4d_hats_version",		PLUGIN_VERSION,	"Hats plugin version.",	FCVAR_NOTIFY|FCVAR_DONTRECORD);
 	AutoExecConfig(true,				"l4d_hats");
@@ -383,7 +409,6 @@ public void OnPluginStart()
 	g_hCvarMenu.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarRand.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarSave.AddChangeHook(ConVarChanged_Cvars);
-	g_hCvarView.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarWall.AddChangeHook(ConVarChanged_Cvars);
 	g_hCvarOpaq.AddChangeHook(CvarChangeOpac);
 	g_hCvarThird.AddChangeHook(CvarChangeThird);
@@ -454,7 +479,6 @@ void GetCvars()
 	g_iCvarRand = g_hCvarRand.IntValue;
 	g_iCvarSave = g_hCvarSave.IntValue;
 	g_iCvarThird = g_hCvarThird.IntValue;
-	g_bCvarView = g_hCvarView.BoolValue;
 	g_bCvarWall = g_hCvarWall.BoolValue;
 }
 
@@ -475,7 +499,7 @@ void IsAllowed()
 
 		for( int i = 1; i <= MaxClients; i++ )
 		{
-			g_bHatView[i] = g_bCvarView;
+			g_bHatView[i] = false;
 			g_iSelected[i] = GetRandomInt(0, g_iCount -1);
 		}
 
@@ -842,7 +866,13 @@ public void Event_Start(Event event, const char[] name, bool dontBroadcast)
 
 public Action TimerRand(Handle timer)
 {
-	RandHat();
+	for( int i = 1; i <= MaxClients; i++ )
+	{
+		if( IsValidClient(i) )
+		{
+			CreateHat(i, g_iType[i] ? g_iType[i] - 1: -1);
+		}
+	}
 }
 
 public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
@@ -863,7 +893,7 @@ public void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast
 
 public void Event_PlayerSpawn(Event event, const char[] name, bool dontBroadcast)
 {
-	if( g_iCvarRand || g_iCvarSave )
+	if( g_iCvarRand == 2 || g_iCvarSave )
 	{
 		int clientID = event.GetInt("userid");
 		int client = GetClientOfUserId(clientID);
@@ -1317,20 +1347,20 @@ public Action CmdHatRand(int client, int args)
 			RemoveHat(i);
 		}
 
-		RandHat();
+		int last = g_iCvarRand;
+		g_iCvarRand = 1;
+
+		for( int i = 1; i <= MaxClients; i++ )
+		{
+			if( IsValidClient(i) )
+			{
+				CreateHat(i, -1);
+			}
+		}
+
+		g_iCvarRand = last;
 	}
 	return Plugin_Handled;
-}
-
-void RandHat()
-{
-	for( int i = 1; i <= MaxClients; i++ )
-	{
-		if( IsValidClient(i) )
-		{
-			CreateHat(i, g_iType[i] ? g_iType[i] - 1: -1);
-		}
-	}
 }
 
 // ====================================================================================================
@@ -2006,7 +2036,9 @@ bool CreateHat(int client, int index = -1)
 
 	if( index == -1 ) // Random hat
 	{
-		if( g_iCvarRand == 3 && g_iCvarFlags != 0 )
+		if( g_iCvarRand == 0 ) return false;
+
+		if( g_iCvarFlags != 0 )
 		{
 			if( IsFakeClient(client) )
 				return false;
@@ -2021,10 +2053,13 @@ bool CreateHat(int client, int index = -1)
 	}
 	else if( index == -2 ) // Previous random hat
 	{
-		index = g_iType[client];
+		if( g_iCvarRand != 2 ) return false;
 
+		index = g_iType[client];
 		if( index == 0 )
+		{
 			index = GetRandomInt(1, g_iCount);
+		}
 
 		index--;
 	}
@@ -2037,7 +2072,11 @@ bool CreateHat(int client, int index = -1)
 			if( IsFakeClient(client) == true )
 				return false;
 			else
+			{
+				if(  g_iCvarRand == 0 ) return false;
+
 				index = GetRandomInt(1, g_iCount);
+			}
 		}
 		index--;
 	}

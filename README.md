@@ -1,5 +1,5 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.8l"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/3c9f18579eb646a0138e54865d6fbba184a0fcef
+# left-4-dead-2-competitive-scs "SCS v0.9.8m"
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/39da1ccee26b8113c181be9f5722aadc5cdf7db4
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans 1.x https://github.com/sbpp/sourcebans-pp/commit/5331ab9d759308adef97d6bd026ba3d650aa6411
@@ -12,11 +12,9 @@ Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit
 - Advertisements https://forums.alliedmods.net/showthread.php?t=155705
 - l4d_christmas_tree https://forums.alliedmods.net/showthread.php?t=319552 (l4d_christmas_tree.smx eliminado)
 ## Plugins Opcionales
-- readyup https://github.com/SirPlease/L4D2-Competitive-Rework (Editado para dar ready al pulsar 'R' + reproducir sonido)
-- l4d2_mix https://forums.alliedmods.net/showthread.php?t=153781
-- l4d_hats 1.31 https://forums.alliedmods.net/showthread.php?t=153781
-- slots_vote https://github.com/SirPlease/L4D2-Competitive-Rework
-- l4d_tank_rush https://github.com/SirPlease/L4D2-Competitive-Rework
+- readyup https://github.com/SirPlease/L4D2-Competitive-Rework (Editado para reproducir sonido y no mostrar hora del servidor)
+- l4d2_mix https://github.com/LuckyServ/sourcemod-plugins
+- l4d_hats 1.36 https://forums.alliedmods.net/showthread.php?t=153781
 - l4d_stats https://forums.alliedmods.net/showthread.php?t=115965
 ## Plugins SMAC (SourceMod Anti-Cheat) https://github.com/Silenci0/SMAC/tree/9c51c5a200eb6eea9f571b8af249b5e37a716e9e
 - smac
