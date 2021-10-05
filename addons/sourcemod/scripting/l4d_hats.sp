@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION 		"1.36"
+#define PLUGIN_VERSION 		"1.37"
 
 /*======================================================================================
 	Plugin Info:
@@ -31,6 +31,9 @@
 
 ========================================================================================
 	Change Log:
+
+1.37 (09-Sep-2021)
+	- Plugin now deletes the client cookie and hat if they no longer have access to use hats. Requested by "Darkwob".
 
 1.36 (20-Jul-2021)
 	- Removed cvar "l4d_hats_view" - recommended to use "ThirdPersonShoulder_Detect" plugin to turn on/off the hat view when in 3rd/1st person view.
@@ -265,6 +268,7 @@ bool g_bBlocked[MAXPLAYERS+1];			// Determines if the player is blocked from hat
 bool g_bExternalCvar[MAXPLAYERS+1];		// If thirdperson view was detected (thirdperson_shoulder cvar)
 bool g_bExternalProp[MAXPLAYERS+1];		// If thirdperson view was detected (netprop or revive actions)
 bool g_bExternalState[MAXPLAYERS+1];	// If thirdperson view was detected
+bool g_bCookieAuth[MAXPLAYERS+1];		// When cookies cached and client is authorized
 Handle g_hTimerView[MAXPLAYERS+1];		// Thirdperson view when selecting hat
 Handle g_hTimerDetect;
 
@@ -669,7 +673,9 @@ public void OnClientAuthorized(int client, const char[] sSteamID)
 	if( g_bBlocked[client] )
 	{
 		if( IsFakeClient(client) )
+		{
 			g_bBlocked[client] = false;
+		}
 		else if( strcmp(sSteamID, g_sSteamID[client]) )
 		{
 			strcopy(g_sSteamID[client], sizeof(g_sSteamID[]), sSteamID);
@@ -678,6 +684,8 @@ public void OnClientAuthorized(int client, const char[] sSteamID)
 	}
 
 	g_bMenuType[client] = false;
+
+	CookieAuthTest(client);
 }
 
 public void OnClientCookiesCached(int client)
@@ -697,11 +705,32 @@ public void OnClientCookiesCached(int client)
 			int type = StringToInt(sCookie);
 			g_iType[client] = type;
 		}
+
+		CookieAuthTest(client);
+	}
+}
+
+void CookieAuthTest(int client)
+{
+	// Check if clients allowed to use hats otherwise delete cookie/hat
+	if( g_iCvarMake && g_bCookieAuth[client] && !IsFakeClient(client) )
+	{
+		int flags = GetUserFlagBits(client);
+
+		if( !(flags & ADMFLAG_ROOT) && !(flags & g_iCvarMake) )
+		{
+			g_iType[client] = 0;
+			RemoveHat(client);
+			SetClientCookie(client, g_hCookie, "0");
+		}
+	} else {
+		g_bCookieAuth[client] = true;
 	}
 }
 
 public void OnClientDisconnect(int client)
 {
+	g_bCookieAuth[client] = false;
 	delete g_hTimerView[client];
 }
 
@@ -710,13 +739,13 @@ KeyValues OpenConfig()
 	char sPath[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, sPath, sizeof(sPath), CONFIG_SPAWNS);
 	if( !FileExists(sPath) )
-		SetFailState("Cannot find the file data/l4d_hats.cfg");
+		SetFailState("Cannot find the file: \"%s\"", CONFIG_SPAWNS);
 
 	KeyValues hFile = new KeyValues("models");
 	if( !hFile.ImportFromFile(sPath) )
 	{
 		delete hFile;
-		SetFailState("Cannot load the file 'data/l4d_hats.cfg'");
+		SetFailState("Cannot load the file: \"%s\"", CONFIG_SPAWNS);
 	}
 	return hFile;
 }
@@ -2019,14 +2048,14 @@ void RemoveHat(int client)
 	g_iHatIndex[client] = 0;
 
 	if( IsValidEntRef(entity) )
-		AcceptEntityInput(entity, "kill");
+		RemoveEntity(entity);
 
 	// Hidden entity
 	entity = g_iHatWalls[client];
 	g_iHatWalls[client] = 0;
 
 	if( IsValidEntRef(entity) )
-		AcceptEntityInput(entity, "kill");
+		RemoveEntity(entity);
 }
 
 bool CreateHat(int client, int index = -1)

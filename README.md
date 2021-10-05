@@ -1,5 +1,5 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.9a"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/715f8612c0fb920095ee21186622461a8466a87a
+# left-4-dead-2-competitive-scs "SCS v0.9.9b"
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/d2be6abffc750e56054c53d41676fb38e8ff4879
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans 1.x https://github.com/sbpp/sourcebans-pp/commit/5331ab9d759308adef97d6bd026ba3d650aa6411
@@ -14,7 +14,7 @@ Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit
 ## Plugins Opcionales
 - readyup https://github.com/SirPlease/L4D2-Competitive-Rework (Editado para reproducir sonido y no mostrar hora del servidor)
 - l4d2_mix https://github.com/LuckyServ/sourcemod-plugins
-- l4d_hats 1.36 https://forums.alliedmods.net/showthread.php?t=153781
+- l4d_hats 1.37 https://forums.alliedmods.net/showthread.php?t=153781
 - Fortnite Emotes 21-Jan-2021 https://forums.alliedmods.net/showthread.php?t=318981
 - l4d_stats https://forums.alliedmods.net/showthread.php?t=115965 & https://forums.alliedmods.net/showpost.php?p=2748992&postcount=197
 ## Plugins SMAC (SourceMod Anti-Cheat) https://github.com/Silenci0/SMAC/tree/9c51c5a200eb6eea9f571b8af249b5e37a716e9e
