@@ -1,5 +1,5 @@
 # left-4-dead-2-competitive-scs "SCS v0.9.9d"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/ffc4c80b8bef4f56ec0c9a2dbdbbe15fcac0a1f4
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/e15aa0433d52816fd369bd40ae784a046a8c86cf
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans 1.x https://github.com/sbpp/sourcebans-pp/commit/5331ab9d759308adef97d6bd026ba3d650aa6411
@@ -17,6 +17,7 @@ Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit
 - l4d_hats 1.37 https://forums.alliedmods.net/showthread.php?t=153781
 - Fortnite Emotes 21-Jan-2021 https://forums.alliedmods.net/showthread.php?t=318981
 - l4d_stats https://forums.alliedmods.net/showthread.php?t=115965 & https://forums.alliedmods.net/showpost.php?p=2748992&postcount=197
+- l4d_christmas_tree https://forums.alliedmods.net/showthread.php?t=319552
 ## Plugins SMAC (SourceMod Anti-Cheat) https://github.com/Silenci0/SMAC/tree/9c51c5a200eb6eea9f571b8af249b5e37a716e9e
 - smac
 - smac_aimbot
