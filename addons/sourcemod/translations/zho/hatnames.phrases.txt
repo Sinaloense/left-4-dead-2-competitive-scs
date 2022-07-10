@@ -1,477 +1,383 @@
 "Phrases"
 {
-    "Hand Gib"
+	"models/infected/gibs/gibs.mdl"
 	{
-		"zho"			"布吉手臂"
+		"zho"		"隻手遮天"
 	}
-
-	"Boomer Head"
+	"models/infected/limbs/exploded_boomer_head.mdl"
 	{
-		"zho"			"Boomer的頭"
+		"zho"		"Boomer的頭"
 	}
-
-	"Head Gib"
+	"models/infected/limbs/limb_male_head01.mdl"
 	{
-		"zho"			"布吉頭"
+		"zho"		"假面"
 	}
-
-	"Circular Saw"
+	"models/props/cs_militia/circularsaw01.mdl"
 	{
-		"zho"			"圓鋸"
+		"zho"		"圓鋸"
 	}
-
-	"Red Emergency Light"
+	"models/props/de_nuke/emergency_lighta.mdl"
 	{
-		"zho"			"紅色應急燈"
+		"zho"		"紅色應急燈"
 	}
-
-	"Alligator"
+	"models/props_fairgrounds/alligator.mdl"
 	{
-		"zho"			"鱷魚布偶"
+		"zho"		"鱷魚布偶"
 	}
-
-	"Mr Mustachio"
+	"models/props_fairgrounds/mr_mustachio.mdl"
 	{
-		"zho"			"穆斯塔基奧先生"
+		"zho"		"鬍子先生"
 	}
-
-	"Traffic Cone"
+	"models/props_fortifications/orange_cone001_clientside.mdl"
 	{
-		"zho"			"交通錐"
+		"zho"		"交通錐"
 	}
-
-	"Teddy Bear"
+	"models/props_interiors/teddy_bear.mdl"
 	{
-		"zho"			"泰迪熊"
+		"zho"		"玩具熊"
 	}
-
-	"Toilet Seat"
+	"models/props_interiors/toilet_b_breakable01_part13.mdl"
 	{
-		"zho"			"馬桶座圈"
+		"zho"		"馬桶座圈"
 	}
-
-	"Water bottle"
+	"models/props_interiors/waterbottle.mdl"
 	{
-		"zho"			"礦泉水瓶"
+		"zho"		"礦泉水瓶"
 	}
-
-	"Dock Pylon"
+	"models/props_urban/dock_pylon_cap001.mdl"
 	{
-		"zho"			"碼頭塔"
+		"zho"		"碼頭塔"
 	}
-
-	"Life Ring"
+	"models/props_urban/life_ring001.mdl"
 	{
-		"zho"			"救生圈"
+		"zho"		"救生圈"
 	}
-
-	"Construction Light"
+	"models/props_lighting/light_construction02.mdl"
 	{
-		"zho"			"施工燈"
+		"zho"		"施工燈"
 	}
-
-	"Speech Quote"
+	"models/extras/info_speech.mdl"
 	{
-		"zho"			"我無言了"
+		"zho"		"我無言了"
 	}
-
-	"Smoker Tongue"
+	"models/infected/smoker_tongue_attach.mdl"
 	{
-		"zho"			"Smoker的舌頭"
+		"zho"		"Smoker的舌頭"
 	}
-
-	"Ceiling Fan Blades"
+	"models/props/de_inferno/ceiling_fan_blade.mdl"
 	{
-		"zho"			"吊扇葉片"
+		"zho"		"吊扇葉片"
 	}
-
-	"F-18 Jet Plane"
+	"models/f18/f18_placeholder.mdl"
 	{
-		"zho"			"F-18噴氣式飛機"
+		"zho"		"F-18噴氣式飛機"
 	}
-
-	"Civilian Radio"
+	"models/deadbodies/dead_male_civilian_radio.mdl"
 	{
-		"zho"			"對講機"
+		"zho"		"對講機"
 	}
-
-	"Riot Faceplate"
+	"models/infected/cim_riot_faceplate.mdl"
 	{
-		"zho"			"防暴面板"
+		"zho"		"防暴面板"
 	}
-
-	"Styrofoam Cups"
+	"models/props_interiors/styrofoam_cups.mdl"
 	{
-		"zho"			"發泡膠杯"
+		"zho"		"發泡膠杯"
 	}
-
-	"Bug Lamp Zapper"
+	"models/props_shacks/bug_lamp01.mdl"
 	{
-		"zho"			"驅蟲燈"
+		"zho"		"驅蟲燈"
 	}
-
-	"BBQ Grill"
+	"models/props_unique/grill_campground.mdl"
 	{
-		"zho"			"燒烤爐"
+		"zho"		"燒烤架"
 	}
-
-	"Luggage Cart"
+	"models/props_unique/luggagecart01.mdl"
 	{
-		"zho"			"購物車"
+		"zho"		"購物車"
 	}
-
-	"Lantern"
+	"models/props_unique/spawn_apartment/lantern.mdl"
 	{
-		"zho"			"燈籠"
+		"zho"		"燈籠"
 	}
-
-	"Exit Sign"
+	"models/props_urban/exit_sign002.mdl"
 	{
-		"zho"			"出口指示牌"
+		"zho"		"出口指示牌"
 	}
-
-	"Garden Hose"
+	"models/props_urban/garden_hose001.mdl"
 	{
-		"zho"			"園藝軟管"
+		"zho"		"園藝軟管"
 	}
-
-	"Pink Flamingo"
+	"models/props_urban/plastic_flamingo001.mdl"
 	{
-		"zho"			"粉紅天鵝"
+		"zho"		"粉紅天鵝"
 	}
-
-	"Money Pile"
+	"models/props_waterfront/money_pile.mdl"
 	{
-		"zho"			"錢堆"
+		"zho"		"錢堆"
 	}
-
-	"Elephant"
+	"models/props_fairgrounds/elephant.mdl"
 	{
-		"zho"			"大象布偶"
+		"zho"		"大象布偶"
 	}
-
-	"Giraffe"
+	"models/props_fairgrounds/giraffe.mdl"
 	{
-		"zho"			"長頸鹿布偶"
+		"zho"		"長頸鹿布偶"
 	}
-
-	"Popcorn Box"
+	"models/props_fairgrounds/garbage_popcorn_box.mdl"
 	{
-		"zho"			"爆米花盒"
+		"zho"		"爆米花盒"
 	}
-
-	"Gnome Closet"
+	"models/props_fairgrounds/gnome_closet.mdl"
 	{
-		"zho"			"小矮人的櫃子尸"
+		"zho"		"小矮人的櫃子"
 	}
-
-	"Snake"
+	"models/props_fairgrounds/snake.mdl"
 	{
-		"zho"			"蛇布偶"
+		"zho"		"蛇布偶"
 	}
-
-	"Toaster"
+	"models/props_interiors/toaster.mdl"
 	{
-		"zho"			"烤麵包機"
+		"zho"		"烤麵包機"
 	}
-
-	"Doll"
+	"models/props_unique/doll01.mdl"
 	{
-		"zho"			"玩具娃娃"
+		"zho"		"玩具娃娃"
 	}
-
-	"Hub Cap"
+	"models/props_junk/garbage_hubcap01a.mdl"
 	{
-		"zho"			"輪轂蓋"
+		"zho"		"輪轂蓋"
 	}
-
-	"Mannequin Hand"
+	"models/props_mall/mall_mannequin_rhand.mdl"
 	{
-		"zho"			"模特手"
+		"zho"		"模型手"
 	}
-
-	"Desk Lamp"
+	"models/props_lab/desklamp01.mdl"
 	{
-		"zho"			"檯燈"
+		"zho"		"檯燈"
 	}
-
-	"Big Helicopter"
+	"models/props_vehicles/helicopter_rescue.mdl"
 	{
-		"zho"			"大直升機"
+		"zho"		"大直升機"
 	}
-
-	"News Helicopter"
+	"models/hybridphysx/news_helicoptor_map1_intro_v1.mdl"
 	{
-		"zho"			"新聞直升機"
+		"zho"		"新聞直升機"
 	}
-
-	"Missile"
+	"models/missiles/f18_agm65maverick.mdl"
 	{
-		"zho"			"導彈"
+		"zho"		"導彈"
 	}
-
-	"Fishing Boat"
+	"models/props_vehicles/boat_fishing02.mdl"
 	{
-		"zho"			"漁船"
+		"zho"		"漁船"
 	}
-
-	"Childs Trike"
+	"models/props_urban/big_wheel001.mdl"
 	{
-		"zho"			"三輪車"
+		"zho"		"兒童三輪車"
 	}
-
-	"Deer Head"
+	"models/props_interiors/mounteddeerhead01.mdl"
 	{
-		"zho"			"鹿頭布偶"
+		"zho"		"鹿頭布偶"
 	}
-
-	"Saucepan"
+	"models/props_misc/pot-1.mdl"
 	{
-		"zho"			"平底煲"
+		"zho"		"平底鍋"
 	}
-
-	"Frying Pan"
+	"models/props_c17/metalpot002a.mdl"
 	{
-		"zho"			"平底鍋"
+		"zho"		"煎鍋"
 	}
-
-	"Skull"
+	"models/gibs/hgibs.mdl"
 	{
-		"zho"			"顱骨"
+		"zho"		"顱骨"
 	}
-
-	"Case of Beer"
+	"models/props/cs_militia/caseofbeer01.mdl"
 	{
-		"zho"			"啤酒箱"
+		"zho"		"啤酒箱"
 	}
-
-	"Office Chair"
+	"models/props/cs_office/chair_office.mdl"
 	{
-		"zho"			"辦公椅"
+		"zho"		"辦公椅子"
 	}
-
-	"Graveyard Cross"
+	"models/props_cemetery/crypts_top02.mdl"
 	{
-		"zho"			"墓地十字架"
+		"zho"		"墓地十字架"
 	}
-
-	"Kiddyland Rocket"
+	"models/props_fairgrounds/kiddyland_riderocket_small.mdl"
 	{
-		"zho"			"火箭"
+		"zho"		"兒童樂園火箭"
 	}
-
-	"Toilet"
+	"models/props_interiors/toilet_b_breakable01.mdl"
 	{
-		"zho"			"馬桶"
+		"zho"		"馬桶"
 	}
-
-	"Lamp Shade"
+	"models/props_misc/lamp-1_gib1.mdl"
 	{
-		"zho"			"燈罩"
+		"zho"		"燈罩"
 	}
-
-	"Saddle"
+	"models/props_misc/saddle-1.mdl"
 	{
-		"zho"			"馬鞍"
+		"zho"		"馬鞍"
 	}
-
-	"Wheel Chair"
+	"models/props_unique/wheelchair01.mdl"
 	{
-		"zho"			"輪椅"
+		"zho"		"輪椅"
 	}
-
-	"Mega Phone"
+	"models/props_urban/mega_phone001.mdl"
 	{
-		"zho"			"擴音器"
+		"zho"		"擴音器"
 	}
-
-	"Flood lights"
+	"models/props/de_train/de_train_floodlights_01.mdl"
 	{
-		"zho"			"投光燈"
+		"zho"		"投光燈"
 	}
-
-	"Car Tire"
+	"models/props_vehicles/tire001c_car.mdl"
 	{
-		"zho"			"汽車輪胎"
+		"zho"		"汽車輪胎"
 	}
-
-	"Ceiling Fan"
+	"models/props/de_inferno/ceiling_fan.mdl"
 	{
-		"zho"			"吊扇"
+		"zho"		"吊扇"
 	}
-
-	"Fan"
+	"models/props/de_prodigy/fan.mdl"
 	{
-		"zho"			"風扇"
+		"zho"		"風扇"
 	}
-
-	"Pot Plant 1"
+	"models/props_foliage/urban_pot_clay01.mdl"
 	{
-		"zho"			"盆栽植物1"
+		"zho"		"盆栽植物1"
 	}
-
-	"Pot Plant 2"
+	"models/props_foliage/urban_pot_clay02.mdl"
 	{
-		"zho"			"盆栽植物2"
+		"zho"		"盆栽植物2"
 	}
-
-	"Ironing Board"
+	"models/props_downtown/ironing_board_flat.mdl"
 	{
-		"zho"			"燙衣板"
+		"zho"		"熨衣板"
 	}
-
-	"Coin"
+	"models/props_collectables/coin.mdl"
 	{
-		"zho"			"錢幣"
+		"zho"		"金幣"
 	}
-
-	"Jockey"
+	"models/infected/jockey.mdl"
 	{
-		"zho"			"迷你Jockey"
+		"zho"		"迷你Jockey"
 	}
-
-	"Gift"
+	"models/items/l4d_gift.mdl"
 	{
-		"zho"			"禮物盒"
+		"zho"		"禮物盒"
 	}
-
-	"Fire Hydrant"
+	"models/props_street/firehydrant.mdl"
 	{
-		"zho"			"消防栓"
+		"zho"		"消防栓"
 	}
-
-	"Gnome"
+	"models/props_junk/gnome.mdl"
 	{
-		"zho"			"小矮人"
+		"zho"		"小矮人"
 	}
-
-	"Sail Boat"
+	"models/bunny/b_sailboat.mdl"
 	{
-		"zho"			"帆船"
+		"zho"		"帆船"
 	}
-
-	"Red Bulkhead Light"
+	"models/props/de_nuke/light_red2.mdl"
 	{
-		"zho"			"紅色隔板燈"
+		"zho"		"紅色隔板燈"
 	}
-
-	"Wheel Hubcap"
+	"models/props_buildables/mine.mdl"
 	{
-		"zho"			"輪轂罩"
+		"zho"		"輪轂罩"
 	}
-
-	"Graveyard Cross"
+	"models/props_cemetery/crypts_top01.mdl"
 	{
-		"zho"			"墓地十字架"
+		"zho"		"墓地十字架"
 	}
-
-	"Tea Pot"
+	"models/props_misc/tea_pot-1.mdl"
 	{
-		"zho"			"茶壺"
+		"zho"		"茶壺"
 	}
-
-	"Pyrotechnics"
+	"models/props_fairgrounds/pyrotechnics_launcher.mdl"
 	{
-		"zho"			"煙火"
+		"zho"		"煙火"
 	}
-
-	"Coffee Maker"
+	"models/props_interiors/coffee_maker.mdl"
 	{
-		"zho"			"咖啡機"
+		"zho"		"咖啡機"
 	}
-
-	"Kettle"
+	"models/props_interiors/pot01a.mdl"
 	{
-		"zho"			"水壺"
+		"zho"		"水壺"
 	}
-
-	"TV"
+	"models/props_interiors/tv.mdl"
 	{
-		"zho"			"電視機"
+		"zho"		"電視機"
 	}
-
-	"Lamp Shade 1"
+	"models/props_interiors/lamp_floor_gib2.mdl"
 	{
-		"zho"			"燈罩1"
+		"zho"		"燈罩1"
 	}
-
-	"Lamp Shade 2"
+	"models/props_interiors/lamp_table02_gib2.mdl"
 	{
-		"zho"			"燈罩2"
+		"zho"		"燈罩2"
 	}
-
-	"Lamp Shade 3"
+	"models/props_lighting/semi_flush_001.mdl"
 	{
-		"zho"			"燈罩3"
+		"zho"		"燈罩3"
 	}
-
-	"Dog Food"
+	"models/props_junk/petfoodbag01.mdl"
 	{
-		"zho"			"狗糧"
+		"zho"		"狗糧"
 	}
-
-	"Dalek Flash Light"
+	"models/props_lighting/flashlight_dropped_01.mdl"
 	{
-		"zho"			"手電筒"
+		"zho"		"手電筒"
 	}
-
-	"Ball Light"
+	"models/props_lighting/lightfixture03.mdl"
 	{
-		"zho"			"球燈"
+		"zho"		"球燈"
 	}
-
-	"Cash Register"
+	"models/props_mall/cash_register.mdl"
 	{
-		"zho"			"收銀機"
+		"zho"		"收銀機"
 	}
-
-	"Gun Trophy 1"
+	"models/props_placeable/tier1_guns_trophy.mdl"
 	{
-		"zho"			"槍戰利品1"
+		"zho"		"槍架1"
 	}
-
-	"Gun Trophy 2"
+	"models/props_placeable/tier2_guns_trophy.mdl"
 	{
-		"zho"			"槍戰利品2"
+		"zho"		"槍架2"
 	}
-
-	"Spitter Arms"
+	"models/weapons/arms/v_spitter_arms.mdl"
 	{
-		"zho"			"飛濺武器"
+		"zho"		"Spitter的手"
 	}
-
-	"Jockey Claws"
+	"models/weapons/arms/v_jockey_arms.mdl"
 	{
-		"zho"			"Jockey的爪"
+		"zho"		"Jockey的爪"
 	}
-
-	"Tank Claws"
+	"models/v_models/weapons/v_claw_hulk.mdl"
 	{
-		"zho"			"Tank的爪"
+		"zho"		"Tank的爪"
 	}
-
-	"Grenade Shell"
+	"models/w_models/weapons/w_he_grenade.mdl"
 	{
-		"zho"			"手榴彈殼"
+		"zho"		"炮彈"
 	}
-
-	"Propane Cylinder"
+	"models/props_junk/propanecanister001a.mdl"
 	{
-		"zho"			"丙烷氣瓶"
+		"zho"		"丙烷氣瓶"
 	}
-
-	"Medkit Cap"
+	"models/w_models/weapons/w_eq_medkit.mdl"
 	{
-		"zho"			"藥盒蓋"
+		"zho"		"醫療包帽"
 	}
-
-	"Riot Shield"
+	"models/weapons/melee/w_riotshield.mdl"
 	{
-		"zho"			"防暴盾牌"
+		"zho"		"防暴盾牌"
 	}
-
-	"Tug Boat"
+	"models/props_skybox/boat_rescue_tug_sunshine.mdl"
 	{
-		"zho"			"拖船"
+		"zho"		"遊艇"
 	}
 }
