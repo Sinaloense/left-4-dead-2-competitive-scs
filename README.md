@@ -1,5 +1,5 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.9n"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/c9066c0d9f33d4bf31986810d88130a89295bea4
+# left-4-dead-2-competitive-scs "SCS v0.9.9o"
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/fb2d0bfff15061240add0ffc108de3b69228c7cd
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans 1.x https://github.com/sbpp/sourcebans-pp/commit/63637f0d3c4c73805d4fbb484ba431ac7d23b462
@@ -12,7 +12,6 @@ Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit
 - Advertisements https://forums.alliedmods.net/showthread.php?t=155705
 - l4d_christmas_tree https://forums.alliedmods.net/showthread.php?t=319552 (l4d_christmas_tree.smx eliminado)
 ## Plugins Opcionales
-- readyup https://github.com/SirPlease/L4D2-Competitive-Rework (Editado para reproducir sonido y no mostrar hora del servidor)
 - l4d2_mix https://github.com/LuckyServ/sourcemod-plugins
 - l4d_hats 1.45 https://forums.alliedmods.net/showthread.php?t=153781
 - Fortnite Emotes 21-Jan-2021 https://forums.alliedmods.net/showthread.php?t=318981
