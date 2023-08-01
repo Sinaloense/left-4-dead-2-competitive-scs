@@ -1,21 +1,21 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.9u"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/c6105159c532b67711bca57626c5107515727835
+# left-4-dead-2-competitive-scs "SCS v0.9.10"
+Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/0dd7a35a1e1f50b7dbed3eee200ecb2376f1bbb6
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
 - SourceBans 1.x https://github.com/sbpp/sourcebans-pp/commit/63637f0d3c4c73805d4fbb484ba431ac7d23b462
-- l4d2_server_restarter https://github.com/LuckyServ/sourcemod-plugins/blob/master/source/l4d2_server_restarter.sp
-- server_namer https://forums.alliedmods.net/showthread.php?p=2030557 (Editado para cargarse desde server.cfg con la cvar "hostname")
-- savechat https://forums.alliedmods.net/showthread.php?t=117116
-- SpecListener2.0 https://forums.alliedmods.net/showthread.php?t=95474
-- chat-processor https://forums.alliedmods.net/showthread.php?p=2448733 (Editado para generar configuraciones en carpeta raiz de cfg)
-- hextags https://forums.alliedmods.net/showthread.php?p=2566623
-- Advertisements https://forums.alliedmods.net/showthread.php?t=155705
-- l4d_christmas_tree https://forums.alliedmods.net/showthread.php?t=319552 (l4d_christmas_tree.smx eliminado)
+- l4d2_server_restarter 3 https://github.com/LuckyServ/sourcemod-plugins/blob/master/source/l4d2_server_restarter.sp
+- server_namer 3.2.1.SCS https://forums.alliedmods.net/showthread.php?p=2030557 (Editado para cargarse desde server.cfg con la cvar "hostname")
+- savechat 1.9 https://github.com/fbef0102/L4D1_2-Plugins/tree/master/savechat
+- SpecListener 2.1.3 https://forums.alliedmods.net/showthread.php?p=1107187#post1107187
+- chat-processor 2.2.3.SCS https://forums.alliedmods.net/showthread.php?p=2448733 (Editado para generar configuraciones en carpeta raiz de cfg)
+- hextags 2.12 https://forums.alliedmods.net/showthread.php?p=2566623
+- Advertisements 2.1.0 https://forums.alliedmods.net/showthread.php?t=155705
+- l4d_christmas_tree 1.6 https://forums.alliedmods.net/showthread.php?t=319552 (l4d_christmas_tree.smx eliminado)
 ## Plugins Opcionales
-- l4d2_mix https://github.com/LuckyServ/sourcemod-plugins
+- l4d2_mix 4 https://github.com/LuckyServ/sourcemod-plugins
 - l4d_hats 1.45 https://forums.alliedmods.net/showthread.php?t=153781
-- Fortnite Emotes 21-Jan-2021 https://forums.alliedmods.net/showthread.php?t=318981
-- l4d_stats https://forums.alliedmods.net/showthread.php?t=115965 & https://forums.alliedmods.net/showpost.php?p=2748992&postcount=197
+- Fortnite Emotes 21-Jan-2021 https://forums.alliedmods.net/showthread.php?t=318981 & https://forums.alliedmods.net/showpost.php?p=2748992&postcount=197
+- l4d_stats 18.1.2023 https://forums.alliedmods.net/showthread.php?t=115965
 ## Plugins SMAC (SourceMod Anti-Cheat) https://github.com/Silenci0/SMAC/tree/9c51c5a200eb6eea9f571b8af249b5e37a716e9e
 - smac
 - smac_aimbot
