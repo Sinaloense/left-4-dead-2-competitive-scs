@@ -1,8 +1,8 @@
-# left-4-dead-2-competitive-scs "SCS v0.9.10"
-Basado y probado con https://github.com/SirPlease/L4D2-Competitive-Rework/commit/0dd7a35a1e1f50b7dbed3eee200ecb2376f1bbb6
+# left-4-dead-2-competitive-scs "SCS v0.9.11"
+Basado y probado con https://gitlab.com/Sinaloense/l4d2-competitive-rework/-/commit/c5380ab29c08568a6bd8bb446e5ce581647f2b5e
 ## Configuraciones usadas en https://www.ServersCStrike.com/
 ## Plugins
-- SourceBans 1.x https://github.com/sbpp/sourcebans-pp/commit/63637f0d3c4c73805d4fbb484ba431ac7d23b462
+- SourceBans php81 https://github.com/sbpp/sourcebans-pp/commit/e3e8ff144b6dc1d5bb4d7c279eb5852a10d1faa8
 - l4d2_server_restarter 3 https://github.com/LuckyServ/sourcemod-plugins/blob/master/source/l4d2_server_restarter.sp
 - server_namer 3.2.1.SCS https://forums.alliedmods.net/showthread.php?p=2030557 (Editado para cargarse desde server.cfg con la cvar "hostname")
 - savechat 1.9 https://github.com/fbef0102/L4D1_2-Plugins/tree/master/savechat
