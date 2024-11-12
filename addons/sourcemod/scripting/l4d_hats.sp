@@ -1,6 +1,6 @@
 /*
 *	Hats
-*	Copyright (C) 2022 Silvers
+*	Copyright (C) 2024 Silvers
 *
 *	This program is free software: you can redistribute it and/or modify
 *	it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 
 
-#define PLUGIN_VERSION 		"1.45"
+#define PLUGIN_VERSION 		"1.51"
 
 /*======================================================================================
 	Plugin Info:
@@ -31,6 +31,33 @@
 
 ========================================================================================
 	Change Log:
+
+1.51 (31-May-2024)
+	- Fixed client not in game errors being thrown on player death. Thanks to "lzvs" for reporting.
+	- Fixed invalid entity errors being thrown. Thanks to "Voevoda" for reporting.
+	- Added Spanish translations. Thanks to "lechuga" for providing.
+
+1.50 (12-Mar-2024)
+	- Added a thirdperson camera detection for "m_hViewEntity". Thanks to "Marttt" for reporting.
+	- More fixes to keep the hat visible when changing between thirdperson modes (events, cvar, TP plugin). Thanks to "Yabi" for reporting.
+
+1.49 (27-Nov-2023)
+	- Fixed the hat showing when being healed by someone else.
+	- Fixed hats randomly showing in first person. Thanks to "Yabi" for reporting.
+	- Fixed the "l4d_hats_random" value "2" not saving across map changes. Thanks to "Yabi" for reporting.
+
+1.48 (24-Nov-2023)
+	- Fixed the hat showing after staggering when the stagger timer didn't reset (due to some plugins such as "Stagger Gravity").
+
+1.47 (22-Nov-2023)
+	- Now shows hats in 3rd person view when healing someone, using a generator or opening a footlocker, and possibly more situations. Thanks to "Voevoda" for reporting.
+	- Fixed invalid handle errors caused by the last update. Should have worked, seems to be some weirdness with SourceMod. Thanks to "Voevoda" for reporting and "HarryPotter" for help.
+
+1.46 (07-Nov-2023)
+	- Now shows hats in 3rd person view when deploying upgrade ammo packs, staggering or recovering from a pounce/charge. Thanks to "Voevoda" for reporting.
+
+1.45a (27-Aug-2022)
+	- Updated "Russian" translation file. Thanks to "A1ekin" for making changes.
 
 1.45 (29-May-2022)
 	- Added public command "sm_hats" to display a menu of hat options. Thanks to "pan0s" for writing.
@@ -338,6 +365,7 @@ bool g_bExternalState[MAXPLAYERS+1];	// If thirdperson view was detected
 bool g_bExternalChange[MAXPLAYERS+1];	// When changing hats, show in 3rd person
 bool g_bCookieAuth[MAXPLAYERS+1];		// When cookies cached and client is authorized
 Handle g_hTimerView[MAXPLAYERS+1];		// Thirdperson view when selecting hat
+Handle g_hTimerDelay[MAXPLAYERS+1];		// Delayed return to 1st person
 Handle g_hTimerDetect;
 
 // ReadyUP plugin
@@ -484,7 +512,7 @@ public void OnPluginStart()
 	g_hCvarModesTog = CreateConVar(		"l4d_hats_modes_tog",	"",				"Turn on the plugin in these game modes. 0=All, 1=Coop, 2=Survival, 4=Versus, 8=Scavenge. Add numbers together.", CVAR_FLAGS );
 	g_hCvarOpaq = CreateConVar(			"l4d_hats_opaque",		"255", 			"How transparent or solid should the hats appear. 0=Translucent, 255=Opaque.", CVAR_FLAGS, true, 0.0, true, 255.0 );
 	g_hCvarPrecache = CreateConVar(		"l4d_hats_precache",	"",				"Prevent pre-caching models on these maps, separate by commas (no spaces). Enabling plugin on these maps will crash the server.", CVAR_FLAGS );
-	g_hCvarRand = CreateConVar(			"l4d_hats_random",		"1", 			"Attach a random hat when survivors spawn. 0=Never. 1=On round start. 2=Only first spawn (keeps the same hat next round).", CVAR_FLAGS, true, 0.0, true, 3.0 );
+	g_hCvarRand = CreateConVar(			"l4d_hats_random",		"1", 			"Attach a random hat when survivors spawn. 0=Never. 1=On round start. 2=Only first spawn (keeps the same hat next round).", CVAR_FLAGS, true, 0.0, true, 2.0 );
 	g_hCvarSave = CreateConVar(			"l4d_hats_save",		"1", 			"0=Off, 1=Save the players selected hats and attach when they spawn or rejoin the server. Overrides the random setting.", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	g_hCvarThird = CreateConVar(		"l4d_hats_third",		"1", 			"0=Off, 1=When a player is in third person view, display their hat. Hide when in first person view.", CVAR_FLAGS, true, 0.0, true, 1.0 );
 	g_hCvarWall = CreateConVar(			"l4d_hats_wall",		"1",			"0=Show hats glowing through walls, 1=Hide hats glowing when behind walls (creates 1 extra entity per hat).", CVAR_FLAGS, true, 0.0, true, 1.0 );
@@ -887,6 +915,7 @@ public void OnClientDisconnect(int client)
 	g_bExternalCvar[client] = false;
 	g_bExternalChange[client] = false;
 	g_bCookieAuth[client] = false;
+	delete g_hTimerDelay[client];
 	delete g_hTimerView[client];
 }
 
@@ -1006,19 +1035,21 @@ void HookViewEvents()
 	{
 		g_bViewHooked = true;
 
-		HookEvent("revive_success",			Event_First2);
-		HookEvent("player_ledge_grab",		Event_Third1);
-		HookEvent("lunge_pounce",			Event_Third2);
-		HookEvent("pounce_end",				Event_First1);
-		HookEvent("tongue_grab",			Event_Third2);
-		HookEvent("tongue_release",			Event_First1);
+		HookEvent("revive_success",					Event_First2);
+		HookEvent("player_ledge_grab",				Event_Third1);
+		HookEvent("lunge_pounce",					Event_Third2);
+		HookEvent("pounce_end",						Event_FirstDelay);
+		HookEvent("tongue_grab",					Event_Third2);
+		HookEvent("tongue_release",					Event_First1);
 
 		if( g_bLeft4Dead2 )
 		{
+			HookEvent("upgrade_pack_begin",			Event_Third1);
+			HookEvent("upgrade_pack_used",			Event_First3);
 			HookEvent("charger_pummel_start",		Event_Third2);
 			HookEvent("charger_carry_start",		Event_Third2);
 			HookEvent("charger_carry_end",			Event_First1);
-			HookEvent("charger_pummel_end",			Event_First1);
+			HookEvent("charger_pummel_end",			Event_FirstDelay);
 		}
 	}
 }
@@ -1029,19 +1060,21 @@ void UnhookViewEvents()
 	{
 		g_bViewHooked = true;
 
-		UnhookEvent("revive_success",		Event_First2);
-		UnhookEvent("player_ledge_grab",	Event_Third1);
-		UnhookEvent("lunge_pounce",			Event_Third2);
-		UnhookEvent("pounce_end",			Event_First1);
-		UnhookEvent("tongue_grab",			Event_Third2);
-		UnhookEvent("tongue_release",		Event_First1);
+		UnhookEvent("revive_success",				Event_First2);
+		UnhookEvent("player_ledge_grab",			Event_Third1);
+		UnhookEvent("lunge_pounce",					Event_Third2);
+		UnhookEvent("pounce_end",					Event_FirstDelay);
+		UnhookEvent("tongue_grab",					Event_Third2);
+		UnhookEvent("tongue_release",				Event_First1);
 
 		if( g_bLeft4Dead2 )
 		{
+			UnhookEvent("upgrade_pack_begin",		Event_Third1);
+			UnhookEvent("upgrade_pack_used",		Event_First3);
 			UnhookEvent("charger_pummel_start",		Event_Third2);
 			UnhookEvent("charger_carry_start",		Event_Third2);
 			UnhookEvent("charger_carry_end",		Event_First1);
-			UnhookEvent("charger_pummel_end",		Event_First1);
+			UnhookEvent("charger_pummel_end",		Event_FirstDelay);
 		}
 	}
 }
@@ -1081,7 +1114,7 @@ void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 void Event_PlayerDeath(Event event, const char[] name, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(event.GetInt("userid"));
-	if( !client || GetClientTeam(client) != 2 )
+	if( !client || !IsClientInGame(client) || GetClientTeam(client) != 2 )
 		return;
 
 	RemoveHat(client);
@@ -1117,7 +1150,7 @@ void Event_PlayerTeam(Event event, const char[] name, bool dontBroadcast)
 		CreateTimer(0.1, TimerDelayCreate, clientID);
 }
 
-Action TimerDelayCreate(Handle timer, any client)
+Action TimerDelayCreate(Handle timer, int client)
 {
 	client = GetClientOfUserId(client);
 
@@ -1150,31 +1183,87 @@ Action TimerDelayCreate(Handle timer, any client)
 	return Plugin_Continue;
 }
 
+void Event_FirstDelay(Event event, const char[] name, bool dontBroadcast)
+{
+	int client = GetClientOfUserId(event.GetInt("victim"));
+	if( client )
+	{
+		delete g_hTimerDelay[client];
+
+		if( name[0] == 'c' ) // charger_pummel_end
+			g_hTimerDelay[client] = CreateTimer(3.0, TimerDelayFirst, client);
+		else // pounce_end .. if( name[0] == 'p' ) 
+			g_hTimerDelay[client] = CreateTimer(2.5, TimerDelayFirst, client);
+	}
+}
+
+Action TimerDelayFirst(Handle timer, int client)
+{
+	g_hTimerDelay[client] = null;
+
+	if( IsClientInGame(client) )
+	{
+		EventHatView(client, false);
+	}
+
+	return Plugin_Continue;
+}
+
 void Event_First1(Event event, const char[] name, bool dontBroadcast)
 {
-	EventView(GetClientOfUserId(event.GetInt("victim")), false);
+	EventView(event.GetInt("victim"), false);
+}
+
+void Event_First3(Event event, const char[] name, bool dontBroadcast)
+{
+	EventView(event.GetInt("userid"), false);
 }
 
 void Event_First2(Event event, const char[] name, bool dontBroadcast)
 {
-	EventView(GetClientOfUserId(event.GetInt("subject")), false);
+	EventView(event.GetInt("subject"), false);
 }
 
 void Event_Third1(Event event, const char[] name, bool dontBroadcast)
 {
-	EventView(GetClientOfUserId(event.GetInt("userid")), true);
+	EventView(event.GetInt("userid"), true);
 }
 
 void Event_Third2(Event event, const char[] name, bool dontBroadcast)
 {
-	EventView(GetClientOfUserId(event.GetInt("victim")), true);
+	EventView(event.GetInt("victim"), true);
 }
 
-void EventView(int client, bool bIsThirdPerson)
+void EventView(int client, bool bToThirdPerson)
+{
+	DataPack dPack = new DataPack();
+	dPack.WriteCell(client);
+	dPack.WriteCell(bToThirdPerson);
+	RequestFrame(OnFrameEvent, dPack);
+}
+
+void OnFrameEvent(DataPack dPack)
+{
+	dPack.Reset();
+	int client = dPack.ReadCell();
+	bool bToThirdPerson = dPack.ReadCell();
+	delete dPack;
+
+	client = GetClientOfUserId(client);
+
+	if( client && IsClientInGame(client) )
+	{
+		EventHatView(client, bToThirdPerson);
+	}
+}
+
+void EventHatView(int client, bool bToThirdPerson)
 {
 	if( HatsValidClient(client) )
 	{
-		SetHatView(client, bIsThirdPerson);
+		if( bToThirdPerson ) delete g_hTimerDelay[client];
+
+		SetHatView(client, bToThirdPerson);
 	}
 }
 
@@ -1187,13 +1276,49 @@ Action TimerDetect(Handle timer)
 		return Plugin_Stop;
 	}
 
+	int target;
+	bool pass;
+
 	for( int i = 1; i <= MaxClients; i++ )
 	{
 		if( g_bExternalCvar[i] == false && g_iHatIndex[i] && IsClientInGame(i) && GetClientTeam(i) == 2 && IsPlayerAlive(i) )
 		{
-			if( (g_bLeft4Dead2 && GetEntPropFloat(i, Prop_Send, "m_TimeForceExternalView") > GetGameTime()) || GetEntPropEnt(i, Prop_Send, "m_reviveTarget") != -1 )
+			pass = false;
+
+			if( g_bLeft4Dead2 )
 			{
-				g_bIsThirdPerson[i] = true;
+				if(
+					GetEntPropFloat(i, Prop_Send, "m_TimeForceExternalView") > GetGameTime() ||
+					(GetEntPropEnt(i, Prop_Send, "m_useActionTarget") != -1 && GetEntPropEnt(i, Prop_Send, "m_useActionOwner") == i)
+				)
+				{
+					pass = true;
+				}
+			}
+			else
+			{
+				target = GetEntPropEnt(i, Prop_Send, "m_healTarget");
+				if( target > 0 && target != i )
+				{
+					pass = true;
+				}
+			}
+
+			if( !pass )
+			{
+				if(
+					GetEntPropEnt(i, Prop_Send, "m_hViewEntity") != -1 ||
+					GetEntPropEnt(i, Prop_Send, "m_reviveTarget") != -1 ||
+					GetEntPropFloat(i, Prop_Send, "m_staggerTimer", 1) > GetGameTime()
+				)
+				{
+					pass = true;
+				}
+			}
+
+			if( pass )
+			{
+				// g_bIsThirdPerson[i] = true;
 
 				if( g_bExternalProp[i] == false )
 				{
@@ -1209,7 +1334,7 @@ Action TimerDetect(Handle timer)
 			}
 			else
 			{
-				g_bIsThirdPerson[i] = false;
+				// g_bIsThirdPerson[i] = false;
 
 				if( g_bExternalProp[i] == true )
 				{
@@ -1237,11 +1362,12 @@ public void TP_OnThirdPersonChanged(int client, bool bIsThirdPerson)
 
 	if( g_fCvarDetect )
 	{
-		if( bIsThirdPerson && g_bExternalCvar[client] )
-		{
-			SetHatView(client, false);
-		}
-		else if( bIsThirdPerson && !g_bExternalCvar[client] )
+		// if( bIsThirdPerson && g_bExternalCvar[client] )
+		// {
+			// SetHatView(client, false);
+		// }
+		// else if( bIsThirdPerson && !g_bExternalCvar[client] )
+		if( bIsThirdPerson && !g_bExternalCvar[client] )
 		{
 			g_bExternalCvar[client] = true;
 			if( g_bHatViewTP[client] ) SetHatView(client, true);
@@ -1259,14 +1385,31 @@ void SetHatView(int client, bool bShowHat)
 {
 	if( bShowHat && !g_bExternalState[client] )
 	{
+		// PrintToChatAll("HatStates On: %d %d %d %d %d %d %d", bShowHat, g_bExternalState[client], g_bExternalChange[client], g_bExternalProp[client], g_bHatView[client], g_bIsThirdPerson[client], g_bHatViewTP[client]);
 		g_bExternalState[client] = true;
 
 		int entity = g_iHatIndex[client];
 		if( entity && (entity = EntRefToEntIndex(entity)) != INVALID_ENT_REFERENCE )
 			SDKUnhook(entity, SDKHook_SetTransmit, Hook_SetTransmit);
 	}
-	else if( !bShowHat && g_bExternalState[client] && !g_bExternalChange[client] && ((!g_bHatView[client] && !g_bIsThirdPerson[client]) || (!g_bHatViewTP[client] && g_bIsThirdPerson[client])) )
+	else if( !bShowHat && g_bExternalState[client] && !g_bExternalChange[client] && !g_bExternalProp[client] && ((!g_bHatView[client] && !g_bIsThirdPerson[client]) || (!g_bHatViewTP[client] && g_bIsThirdPerson[client])) )
 	{
+		// Prevent hiding the hat if events are currently triggered to show:
+		if(
+			GetEntProp(client, Prop_Send, "m_isHangingFromLedge") == 1 ||
+			GetEntPropEnt(client, Prop_Send, "m_reviveTarget") != -1 ||
+			GetEntPropEnt(client, Prop_Send, "m_pounceAttacker") != -1 ||
+			GetEntPropEnt(client, Prop_Send, "m_hViewEntity") != -1 ||
+			(
+				g_bLeft4Dead2 &&
+				(GetEntPropEnt(client, Prop_Send, "m_carryAttacker") != -1 || GetEntPropEnt(client, Prop_Send, "m_pummelAttacker") != -1)
+			)
+		)
+		{
+			return;
+		}
+
+		// PrintToChatAll("HatStates Off: %d %d %d %d %d %d %d", bShowHat, g_bExternalState[client], g_bExternalChange[client], g_bExternalProp[client], g_bHatView[client], g_bIsThirdPerson[client], g_bHatViewTP[client]);
 		g_bExternalState[client] = false;
 
 		int entity = g_iHatIndex[client];
@@ -1318,7 +1461,9 @@ void OnFrameHooks(DataPack dPack)
 	if( client && IsClientInGame(client) && !IsPlayerAlive(client) )
 	{
 		int index = dPack.ReadCell();
-		SDKHook(EntRefToEntIndex(g_iHatIndex[index]), SDKHook_SetTransmit, Hook_SetSpecTransmit);
+		int entity = EntRefToEntIndex(g_iHatIndex[index]);
+		if( entity != INVALID_ENT_REFERENCE )
+			SDKHook(entity, SDKHook_SetTransmit, Hook_SetSpecTransmit);
 	}
 
 	delete dPack;
@@ -2622,8 +2767,8 @@ bool CreateHat(int client, int index = -1)
 				return false;
 		}
 
-		index = GetRandomInt(0, g_iCount -1);
-		g_iType[client] = index + 1;
+		index = GetRandomInt(1, g_iCount);
+		g_iType[client] = index;
 	}
 	else if( index == -2 ) // Previous random hat
 	{
@@ -2635,6 +2780,7 @@ bool CreateHat(int client, int index = -1)
 		if( index == 0 )
 		{
 			index = GetRandomInt(1, g_iCount);
+			g_iType[client] = index;
 		}
 
 		index--;
@@ -2655,6 +2801,7 @@ bool CreateHat(int client, int index = -1)
 				if( g_iCvarRand == 0 ) return false;
 
 				index = GetRandomInt(1, g_iCount);
+				g_iType[client] = index;
 			}
 		}
 
@@ -2766,7 +2913,7 @@ void ExternalView(int client)
 {
 	if( g_fCvarChange && g_bLeft4Dead2 )
 	{
-		EventView(client, true);
+		EventHatView(client, true);
 
 		g_bExternalChange[client] = true;
 
@@ -2779,7 +2926,7 @@ void ExternalView(int client)
 	}
 }
 
-Action TimerEventView(Handle timer, any client)
+Action TimerEventView(Handle timer, int client)
 {
 	client = GetClientOfUserId(client);
 	if( client )
@@ -2787,7 +2934,7 @@ Action TimerEventView(Handle timer, any client)
 		g_hTimerView[client] = null;
 		g_bExternalChange[client] = false;
 
-		EventView(client, false);
+		EventHatView(client, false);
 	}
 
 	return Plugin_Continue;
@@ -2863,25 +3010,25 @@ stock const int CProfile_TeamIndex[] 	= { NO_INDEX, NO_INDEX, SERVER_INDEX, RED_
  *
  * On error/Errors:   If the client is not connected an error will be thrown.
  */
-stock void CPrintToChat( int client, const char[] sMessage, any ... )
+stock void CPrintToChat(int client, const char[] sMessage, any ...)
 {
-	if ( client <= 0 || client > MaxClients )
-		ThrowError( "Invalid client index %d", client );
+	if( client <= 0 || client > MaxClients )
+		ThrowError( "Invalid client index %d", client);
 
-	if ( !IsClientInGame( client ) )
-		ThrowError( "Client %d is not in game", client );
+	if( !IsClientInGame(client) )
+		ThrowError( "Client %d is not in game", client);
 
 	static char sBuffer[250];
 	static char sCMessage[250];
 	SetGlobalTransTarget(client);
-	Format( sBuffer, sizeof( sBuffer ), "\x01%s", sMessage );
-	VFormat( sCMessage, sizeof( sCMessage ), sBuffer, 3 );
+	Format(sBuffer, sizeof(sBuffer), "\x01%s", sMessage);
+	VFormat( sCMessage, sizeof( sCMessage ), sBuffer, 3);
 
-	int index = CFormat( sCMessage, sizeof( sCMessage ) );
+	int index = CFormat(sCMessage, sizeof(sCMessage));
 	if( index == NO_INDEX )
-		PrintToChat( client, sCMessage );
+		PrintToChat(client, sCMessage);
 	else
-		CSayText2( client, index, sCMessage );
+		CSayText2(client, index, sCMessage);
 }
 
 /**
@@ -2892,17 +3039,17 @@ stock void CPrintToChat( int client, const char[] sMessage, any ... )
  * @param sMessage 		Message (formatting rules)
  * @return 				No return
  */
-stock void CPrintToChatAll( const char[] sMessage, any ... )
+stock void CPrintToChatAll(const char[] sMessage, any ...)
 {
 	static char sBuffer[250];
 
-	for ( int i = 1; i <= MaxClients; i++ )
+	for( int i = 1; i <= MaxClients; i++ )
 	{
-		if ( IsClientInGame( i ) && !IsFakeClient( i ) )
+		if( IsClientInGame(i) && !IsFakeClient(i) )
 		{
-			SetGlobalTransTarget( i );
-			VFormat( sBuffer, sizeof( sBuffer ), sMessage, 2 );
-			CPrintToChat( i, sBuffer );
+			SetGlobalTransTarget(i);
+			VFormat(sBuffer, sizeof(sBuffer), sMessage, 2);
+			CPrintToChat(i, sBuffer);
 		}
 	}
 }
@@ -2916,25 +3063,25 @@ stock void CPrintToChatAll( const char[] sMessage, any ... )
  *
  * On error/Errors:   If there is more then one team color is used an error will be thrown.
  */
-stock int CFormat( char[] sMessage, int maxlength )
+stock int CFormat(char[] sMessage, int maxlength)
 {
 	int iRandomPlayer = NO_INDEX;
 
-	for ( int i = 0; i < sizeof(CTagCode); i++ )											//	Para otras etiquetas de color se requiere un bucle.
+	for( int i = 0; i < sizeof(CTagCode); i++ )											//	Para otras etiquetas de color se requiere un bucle.
 	{
-		if ( StrContains( sMessage, CTag[i]) == -1 ) 										//	Si no se encuentra la etiqueta, omitir.
+		if( StrContains( sMessage, CTag[i]) == -1 ) 										//	Si no se encuentra la etiqueta, omitir.
 			continue;
-		else if ( !CTagReqSayText2[i] )
-			ReplaceString( sMessage, maxlength, CTag[i], CTagCode[i] ); 					//	Si la etiqueta no necesita Saytext2 simplemente reemplazará.
+		else if( !CTagReqSayText2[i] )
+			ReplaceString(sMessage, maxlength, CTag[i], CTagCode[i]); 					//	Si la etiqueta no necesita Saytext2 simplemente reemplazará.
 		else																				//	La etiqueta necesita Saytext2.
 		{
-			if ( iRandomPlayer == NO_INDEX )												//	Si no se especificó un cliente aleatorio para la etiqueta, reemplaca la etiqueta y busca un cliente para la etiqueta.
+			if( iRandomPlayer == NO_INDEX )													//	Si no se especificó un cliente aleatorio para la etiqueta, reemplaca la etiqueta y busca un cliente para la etiqueta.
 			{
-				iRandomPlayer = CFindRandomPlayerByTeam( CProfile_TeamIndex[i] ); 			//	Busca un cliente válido para la etiqueta, equipo de infectados oh supervivientes.
-				if ( iRandomPlayer == NO_PLAYER )
-					ReplaceString( sMessage, maxlength, CTag[i], CTagCode[5] ); 			//	Si no se encuentra un cliente valido, reemplasa la etiqueta con una etiqueta de color verde.
+				iRandomPlayer = CFindRandomPlayerByTeam(CProfile_TeamIndex[i]); 			//	Busca un cliente válido para la etiqueta, equipo de infectados oh supervivientes.
+				if( iRandomPlayer == NO_PLAYER )
+					ReplaceString(sMessage, maxlength, CTag[i], CTagCode[5]);	 			//	Si no se encuentra un cliente valido, reemplasa la etiqueta con una etiqueta de color verde.
 				else
-					ReplaceString( sMessage, maxlength, CTag[i], CTagCode[i] ); 			// 	Si el cliente fue encontrado simplemente reemplasa.
+					ReplaceString(sMessage, maxlength, CTag[i], CTagCode[i]); 				// 	Si el cliente fue encontrado simplemente reemplasa.
 			}
 			else 																			//	Si en caso de usar dos colores de equipo infectado y equipo de superviviente juntos se mandará un mensaje de error.
 				ThrowError("Using two team colors in one message is not allowed"); 			//	Si se ha usadó una combinación de colores no validad se registrara en la carpeta logs.
@@ -2950,13 +3097,13 @@ stock int CFormat( char[] sMessage, int maxlength )
  * @param color_team  Client team.
  * @return			  Client index or NO_PLAYER if no player found
  */
-stock int CFindRandomPlayerByTeam( int color_team )
+stock int CFindRandomPlayerByTeam(int color_team)
 {
-	if ( color_team == SERVER_INDEX )
+	if( color_team == SERVER_INDEX )
 		return 0;
 	else
-		for ( int i = 1; i <= MaxClients; i ++ )
-			if ( IsClientInGame( i ) && GetClientTeam( i ) == color_team )
+		for( int i = 1; i <= MaxClients; i++ )
+			if( IsClientInGame(i) && GetClientTeam(i) == color_team )
 				return i;
 
 	return NO_PLAYER;
@@ -2970,12 +3117,12 @@ stock int CFindRandomPlayerByTeam( int color_team )
  * @param sMessage 		Message
  * @return 				No return.
  */
-stock void CSayText2( int client, int author, const char[] sMessage )
+stock void CSayText2(int client, int author, const char[] sMessage)
 {
-	Handle hBuffer = StartMessageOne( "SayText2", client );
-	BfWriteByte( hBuffer, author );
-	BfWriteByte( hBuffer, true );
-	BfWriteString( hBuffer, sMessage );
+	Handle hBuffer = StartMessageOne("SayText2", client);
+	BfWriteByte(hBuffer, author);
+	BfWriteByte(hBuffer, true);
+	BfWriteString(hBuffer, sMessage);
 	EndMessage();
 }
 

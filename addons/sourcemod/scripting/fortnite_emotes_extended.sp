@@ -350,16 +350,16 @@ public void OnClientPutInServer(int client) {
 }
 
 public void OnClientDisconnect(int client) {
-
+    if (IsValidClient(client)) {
         ResetCam(client);
         TerminateEmote(client);
+    }
+    if (CooldownTimers[client] != null) {
+        KillTimer(CooldownTimers[client]);
+        CooldownTimers[client] = null;
+        g_bEmoteCooldown[client] = false;
+    }
 
-        if (CooldownTimers[client] != null) {
-            KillTimer(CooldownTimers[client]);
-            CooldownTimers[client] = null;
-            g_bEmoteCooldown[client] = false;
-        }
-        
     g_bHooked[client] = false;
 }
 
